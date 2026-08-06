@@ -5,7 +5,11 @@ const APPLICATION_TABLE = 'bks_district_leadership_applications';
 const translations = {
   en: {
     brand:"Bharatiya Krishak Samaj", brandSub:"West Bengal",
-    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal",
+    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal", navVolunteer:"Booth volunteers",
+    boothLinkEyebrow:"Booth Volunteer Network",
+    boothLinkTitle:"One farmer volunteer from every booth in West Bengal.",
+    boothLinkText:"District leadership is only the top of the structure. The organisation itself is built booth by booth — one Booth Prabhari for each polling booth, who knows the farming families around them by name. Volunteers enroll for their own booth through a separate enrollment system.",
+    boothLinkCta:"Go to booth volunteer enrollment",
     heroEyebrow:"30 June 2026 · New Delhi",
     heroKicker:"Official Appointment · West Bengal State President",
     heroTitle:"Mahacharya Sourabh J. Sarkar appointed President of Bharatiya Krishak Samaj, West Bengal.",
@@ -81,7 +85,11 @@ const translations = {
   },
   hi: {
     brand:"भारतीय कृषक समाज", brandSub:"पश्चिम बंगाल",
-    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल",
+    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल", navVolunteer:"बूथ स्वयंसेवक",
+    boothLinkEyebrow:"बूथ स्वयंसेवक नेटवर्क",
+    boothLinkTitle:"पश्चिम बंगाल के हर बूथ से एक किसान स्वयंसेवक।",
+    boothLinkText:"जिला नेतृत्व ढाँचे का केवल शिखर है। संगठन तो बूथ दर बूथ बनता है — हर मतदान बूथ पर एक बूथ प्रभारी, जो अपने आसपास के कृषक परिवारों को नाम से जानता है। स्वयंसेवक अपने बूथ के लिए एक अलग पंजीकरण व्यवस्था से जुड़ते हैं।",
+    boothLinkCta:"बूथ स्वयंसेवक पंजीकरण पर जाएँ",
     heroEyebrow:"30 जून 2026 · नई दिल्ली",
     heroKicker:"औपचारिक नियुक्ति · पश्चिम बंगाल राज्य अध्यक्ष",
     heroTitle:"महाचार्य सौरभ जे. सरकार भारतीय कृषक समाज, पश्चिम बंगाल के अध्यक्ष नियुक्त।",
@@ -157,7 +165,11 @@ const translations = {
   },
   bn: {
     brand:"ভারতীয় কৃষক সমাজ", brandSub:"পশ্চিমবঙ্গ",
-    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা",
+    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা", navVolunteer:"বুথ স্বেচ্ছাসেবক",
+    boothLinkEyebrow:"বুথ স্বেচ্ছাসেবক নেটওয়ার্ক",
+    boothLinkTitle:"পশ্চিমবঙ্গের প্রতিটি বুথ থেকে একজন কৃষক স্বেচ্ছাসেবক।",
+    boothLinkText:"জেলা নেতৃত্ব কাঠামোর কেবল উপরের স্তর। সংগঠন গড়ে ওঠে বুথ ধরে ধরে — প্রতিটি ভোটগ্রহণ বুথে একজন বুথ প্রভারী, যিনি চারপাশের কৃষক পরিবারগুলিকে নাম ধরে চেনেন। স্বেচ্ছাসেবকরা নিজের বুথের জন্য একটি আলাদা নথিভুক্তি ব্যবস্থার মাধ্যমে যোগ দেন।",
+    boothLinkCta:"বুথ স্বেচ্ছাসেবক নথিভুক্তিতে যান",
     heroEyebrow:"৩০ জুন ২০২৬ · নয়াদিল্লি",
     heroKicker:"আনুষ্ঠানিক নিয়োগ · পশ্চিমবঙ্গ রাজ্য সভাপতি",
     heroTitle:"মহাচার্য সৌরভ জে. সরকার ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গের সভাপতি নিযুক্ত।",

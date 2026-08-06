@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Booth Volunteer Enrollment | Bharatiya Krishak Samaj, West Bengal</title>
+  <meta name="description" content="One farmer volunteer from every polling booth in West Bengal. Claim your booth and join the Bharatiya Krishak Samaj booth network." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://bks-west-bengal.vercel.app/volunteer" />
+  <meta property="og:site_name" content="Bharatiya Krishak Samaj, West Bengal" />
+  <meta property="og:title" content="One volunteer from every booth | BKS West Bengal" />
+  <meta property="og:description" content="Bharatiya Krishak Samaj, West Bengal is building a farmer volunteer network booth by booth. Claim the booth you belong to." />
+  <meta property="og:image" content="https://bks-west-bengal.vercel.app/assets/appointment/hero-plant-presentation-social-v3.jpeg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Bharatiya Krishak Samaj West Bengal">
+      <img class="brand-logo" src="/assets/bks-logo-unit.png" alt="Bharatiya Krishak Samaj logo" />
+      <span>
+        <strong data-i18n="brand">Bharatiya Krishak Samaj</strong>
+        <small data-i18n="brandSub">West Bengal</small>
+      </span>
+    </a>
+    <nav>
+      <a href="/#vision" data-i18n="navVision">Vision</a>
+      <a href="/#leadership" data-i18n="navLeadership">Leadership</a>
+      <a href="/#enroll" data-i18n="navDistrict">District leadership</a>
+      <a href="/volunteer" class="active" data-i18n="navVolunteer">Booth volunteers</a>
+    </nav>
+    <div class="lang-switch" aria-label="Language switcher">
+      <button class="active" data-lang="en">EN</button>
+      <button data-lang="hi">हिं</button>
+      <button data-lang="bn">বাং</button>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero booth-hero">
+      <div class="grain"></div>
+      <div class="hero-copy">
+        <p class="eyebrow" data-i18n="boothEyebrow">Booth Volunteer Network · West Bengal</p>
+        <h1 data-i18n="boothTitle">One farmer volunteer from every booth.</h1>
+        <p class="lead" data-i18n="boothLead">Bharatiya Krishak Samaj, West Bengal is being built from the ground up — booth by booth. Each polling booth gets one Booth Prabhari: a farmer or farm-family member who knows that village, carries BKS work there, and speaks for its cultivators. Find your booth, check whether it is still open, and claim it.</p>
+        <div class="hero-meta">
+          <div><span data-i18n="boothMeta1Label">The unit</span><strong data-i18n="boothMeta1">One booth, one Prabhari</strong></div>
+          <div><span data-i18n="boothMeta2Label">Who can enroll</span><strong data-i18n="boothMeta2">Any farmer, 18 and above</strong></div>
+          <div><span data-i18n="boothMeta3Label">What it costs</span><strong data-i18n="boothMeta3">Nothing. No fee, ever.</strong></div>
+        </div>
+        <div class="hero-actions">
+          <a class="button primary" href="#claim" data-i18n="boothCta">Claim my booth</a>
+          <a class="button ghost" href="#how" data-i18n="boothCta2">How the booth system works</a>
+        </div>
+      </div>
+      <aside class="hero-card coverage-card" aria-label="Live enrollment coverage">
+        <p class="eyebrow" data-i18n="coverageEyebrow">Live coverage</p>
+        <div class="coverage-figure">
+          <strong id="coverageBooths">—</strong>
+          <span data-i18n="coverageBoothsLabel">booths claimed</span>
+        </div>
+        <div class="coverage-split">
+          <div><strong id="coverageDistricts">—</strong><span data-i18n="coverageDistrictsLabel">districts active</span></div>
+          <div><strong id="coverageSupport">—</strong><span data-i18n="coverageSupportLabel">support volunteers</span></div>
+        </div>
+        <div class="card-rule"></div>
+        <p class="small" id="coverageNote" data-i18n="coverageNote">Counts update as volunteers enroll. West Bengal has 294 assembly constituencies and roughly 80,000 polling booths — this is a long walk, and it starts with your village.</p>
+      </aside>
+    </section>
+
+    <section class="section booth-how" id="how">
+      <div class="story-head">
+        <p class="eyebrow" data-i18n="howEyebrow">How it works</p>
+        <h2 data-i18n="howTitle">Why the booth, and not the district, is the real unit.</h2>
+        <p data-i18n="howText">A district head cannot know ten thousand farmers. A booth volunteer knows three hundred, by name. The booth is the smallest unit where farmer problems are actually visible — which fields flooded, which family did not get their seed, which cold store cheated whom. BKS West Bengal builds upward from there.</p>
+      </div>
+      <div class="ladder-grid">
+        <article>
+          <span>01</span>
+          <h3 data-i18n="ladder1">Booth Prabhari</h3>
+          <p data-i18n="ladder1Text">One per polling booth. Knows the farming families of that booth area, registers their issues, carries BKS training and information to them, and represents them upward.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3 data-i18n="ladder2">Booth Sahayak</h3>
+          <p data-i18n="ladder2Text">Up to four support volunteers per booth — youth, women farmers, agri-graduates. If your booth is already claimed, this is how you still serve it.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3 data-i18n="ladder3">Gram Panchayat and Block</h3>
+          <p data-i18n="ladder3Text">Booth Prabharis of an area form the panchayat and block committees. Nobody is appointed to a block seat without booth-level work behind them.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3 data-i18n="ladder4">District and State</h3>
+          <p data-i18n="ladder4Text">District leadership is chosen from those who built booth strength. The state committee under Mahacharya Sourabh J. Sarkar sits on this foundation, not above it.</p>
+        </article>
+      </div>
+      <div class="duty-panel">
+        <div>
+          <p class="eyebrow" data-i18n="dutyEyebrow">What a Booth Prabhari actually does</p>
+          <h3 data-i18n="dutyTitle">Four hours a week. Real work, not a title.</h3>
+        </div>
+        <ul class="duty-list">
+          <li data-i18n="duty1">Build and keep a living list of farming families in your booth area — what they grow, how much land, what they struggle with.</li>
+          <li data-i18n="duty2">Carry BKS training on natural farming, seed, soil and input costs into your village, in Bengali.</li>
+          <li data-i18n="duty3">Report farmer problems upward — crop loss, input price, mandi rates, irrigation, compensation delays — so the state unit can raise them with weight.</li>
+          <li data-i18n="duty4">Bring at least ten farming families into BKS membership in your first ninety days.</li>
+          <li data-i18n="duty5">Help women farmers and rural youth in your booth reach BKS training and enterprise programmes.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section booth-claim" id="claim">
+      <div class="enroll-intro">
+        <p class="eyebrow" data-i18n="claimEyebrow">Booth enrollment</p>
+        <h2 data-i18n="claimTitle">Find your booth. Check it. Claim it.</h2>
+        <p data-i18n="claimText">Your booth is identified by two numbers: your assembly constituency number (1 to 294) and your booth part number. Both are printed on your voter slip and on the EPIC roll. If you do not know them, ask at your gram panchayat office or your nearest BKS worker — and enroll anyway, we will help you fix the numbers.</p>
+      </div>
+
+      <div class="claim-layout">
+        <aside class="agent-panel booth-agent" aria-label="BKS Booth Sahayak guidance">
+          <div class="agent-avatar">बू</div>
+          <p class="eyebrow" data-i18n="guideEyebrow">Booth enrollment guide</p>
+          <h3 id="guideTitle" data-i18n="guideTitle">Step one: tell me which booth you belong to.</h3>
+          <p id="guidePrompt" data-i18n="guidePrompt">Enter your district, your assembly constituency number and your booth number, then press check. I will tell you immediately whether that booth is still open.</p>
+          <ul class="agent-checklist">
+            <li data-i18n="guideCheck1">Your voter slip carries both numbers</li>
+            <li data-i18n="guideCheck2">One Prabhari per booth — first verified claim holds it</li>
+            <li data-i18n="guideCheck3">If taken, you can still join as Sahayak</li>
+            <li data-i18n="guideCheck4">A BKS worker will call you to verify</li>
+          </ul>
+        </aside>
+
+        <div class="claim-column">
+          <div class="booth-finder" id="boothFinder">
+            <h3 data-i18n="finderTitle">Step 1 · Locate your booth</h3>
+            <div class="finder-grid">
+              <label><span data-i18n="fieldDistrict">District</span>
+                <select id="finderDistrict" required>
+                  <option value="" data-i18n="selectDistrict">Select district</option>
+                  <option>Alipurduar</option><option>Bankura</option><option>Birbhum</option><option>Cooch Behar</option><option>Dakshin Dinajpur</option><option>Darjeeling</option><option>Hooghly</option><option>Howrah</option><option>Jalpaiguri</option><option>Jhargram</option><option>Kalimpong</option><option>Kolkata</option><option>Malda</option><option>Murshidabad</option><option>Nadia</option><option>North 24 Parganas</option><option>Paschim Bardhaman</option><option>Paschim Medinipur</option><option>Purba Bardhaman</option><option>Purba Medinipur</option><option>Purulia</option><option>South 24 Parganas</option><option>Uttar Dinajpur</option>
+                </select>
+              </label>
+              <label><span data-i18n="fieldAc">Assembly constituency</span>
+                <span class="ac-input-row">
+                  <input id="finderAcNo" type="number" min="1" max="294" inputmode="numeric" placeholder="No." required />
+                  <select id="finderAcName" class="hidden"></select>
+                  <input id="finderAcNameText" type="text" placeholder="Constituency name (if known)" />
+                </span>
+              </label>
+              <label><span data-i18n="fieldBoothNo">Booth / part number</span>
+                <input id="finderBoothNo" type="number" min="1" max="3000" inputmode="numeric" required />
+              </label>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="button primary" id="checkBoothBtn" data-i18n="checkBooth">Check this booth</button>
+            </div>
+            <div class="booth-result" id="boothResult" hidden></div>
+          </div>
+
+          <form class="enroll-form booth-form" id="boothVolunteerForm" hidden>
+            <h3 data-i18n="formTitle">Step 2 · Your details</h3>
+            <p class="booth-chip" id="boothChip"></p>
+
+            <fieldset class="role-choice" id="roleChoice">
+              <legend data-i18n="fieldRole">Role at this booth</legend>
+              <label class="role-option">
+                <input type="radio" name="role" value="booth_prabhari" checked />
+                <span><strong data-i18n="rolePrabhari">Booth Prabhari</strong><small data-i18n="rolePrabhariNote">Booth in-charge · one per booth</small></span>
+              </label>
+              <label class="role-option">
+                <input type="radio" name="role" value="booth_sahayak" />
+                <span><strong data-i18n="roleSahayak">Booth Sahayak</strong><small data-i18n="roleSahayakNote">Support volunteer · up to four per booth</small></span>
+              </label>
+            </fieldset>
+
+            <div class="form-grid">
+              <label><span data-i18n="fieldName">Full name</span><input name="full_name" required maxlength="120" /></label>
+              <label><span data-i18n="fieldPhone">Mobile number</span><input name="phone" required inputmode="numeric" pattern="[0-9+ ]{10,15}" placeholder="10-digit mobile" /></label>
+              <label><span data-i18n="fieldWhatsapp">WhatsApp (if different)</span><input name="whatsapp" inputmode="numeric" pattern="[0-9+ ]{0,15}" /></label>
+              <label><span data-i18n="fieldEmail">Email (optional)</span><input name="email" type="email" /></label>
+              <label><span data-i18n="fieldGender">Gender</span><select name="gender">
+                <option value="" data-i18n="optSelect">Select</option>
+                <option value="female" data-i18n="optFemale">Female</option>
+                <option value="male" data-i18n="optMale">Male</option>
+                <option value="other" data-i18n="optOther">Other</option>
+                <option value="undisclosed" data-i18n="optUndisclosed">Prefer not to say</option>
+              </select></label>
+              <label><span data-i18n="fieldAge">Age group</span><select name="age_band">
+                <option value="" data-i18n="optSelect">Select</option>
+                <option>18-25</option><option>26-35</option><option>36-45</option><option>46-60</option><option>60+</option>
+              </select></label>
+            </div>
+
+            <h4 class="form-subhead" data-i18n="subheadPlace">Where you live</h4>
+            <div class="form-grid">
+              <label><span data-i18n="fieldBlock">Block / Municipality</span><input name="block_or_municipality" maxlength="120" /></label>
+              <label><span data-i18n="fieldGp">Gram Panchayat / Ward</span><input name="gram_panchayat_or_ward" maxlength="120" /></label>
+              <label><span data-i18n="fieldVillage">Village / Para</span><input name="village_or_para" maxlength="180" /></label>
+              <label><span data-i18n="fieldBoothName">Booth building (school etc.)</span><input name="booth_name" maxlength="180" /></label>
+              <label><span data-i18n="fieldYears">Years living in this village</span><input name="years_in_village" type="number" min="0" max="120" inputmode="numeric" /></label>
+              <label><span data-i18n="fieldLanguage">Preferred language</span><select name="preferred_language">
+                <option>Bengali</option><option>Hindi</option><option>English</option><option>Nepali</option><option>Santali</option><option>Urdu</option>
+              </select></label>
+            </div>
+
+            <h4 class="form-subhead" data-i18n="subheadFarm">Your farming background</h4>
+            <div class="form-grid">
+              <label><span data-i18n="fieldOccupation">Main occupation</span><input name="occupation" maxlength="120" placeholder="Farmer, sharecropper, agri-input dealer, teacher, student…" /></label>
+              <label><span data-i18n="fieldLand">Land holding</span><select name="land_holding">
+                <option value="" data-i18n="optSelect">Select</option>
+                <option value="landless" data-i18n="optLandless">Landless / farm worker</option>
+                <option value="sharecropper" data-i18n="optSharecropper">Bargadar / sharecropper</option>
+                <option value="under-1-acre" data-i18n="optUnder1">Under 1 acre</option>
+                <option value="1-3-acre" data-i18n="opt13">1 to 3 acres</option>
+                <option value="3-10-acre" data-i18n="opt310">3 to 10 acres</option>
+                <option value="10-plus-acre" data-i18n="opt10p">More than 10 acres</option>
+              </select></label>
+            </div>
+            <label><span data-i18n="fieldCrops">Main crops or farm activity</span><input name="main_crops" maxlength="300" placeholder="Aman paddy, potato, jute, vegetables, fish, dairy…" /></label>
+            <label><span data-i18n="fieldGroups">Farmer groups you belong to (FPO, SHG, co-operative, samiti)</span><input name="farmer_groups" maxlength="300" /></label>
+
+            <h4 class="form-subhead" data-i18n="subheadCommit">Your commitment</h4>
+            <div class="form-grid">
+              <label><span data-i18n="fieldHours">Time you can give each week</span><select name="hours_per_week">
+                <option value="" data-i18n="optSelect">Select</option>
+                <option value="under-2" data-i18n="optHours1">Under 2 hours</option>
+                <option value="2-4" data-i18n="optHours2">2 to 4 hours</option>
+                <option value="4-8" data-i18n="optHours3">4 to 8 hours</option>
+                <option value="8-plus" data-i18n="optHours4">More than 8 hours</option>
+              </select></label>
+              <label><span data-i18n="fieldReferred">Who told you about BKS (optional)</span><input name="referred_by" maxlength="180" /></label>
+            </div>
+            <div class="check-row">
+              <label class="checkbox"><input type="checkbox" name="has_smartphone" /><span data-i18n="fieldSmartphone">I have a smartphone with WhatsApp</span></label>
+              <label class="checkbox"><input type="checkbox" name="can_travel_to_block" /><span data-i18n="fieldTravel">I can travel to block-level BKS meetings</span></label>
+            </div>
+            <label><span data-i18n="fieldMotivation">Why do you want to serve the farmers of your booth?</span><textarea name="motivation" rows="4" maxlength="1200"></textarea></label>
+
+            <div class="consent-block">
+              <label class="checkbox"><input type="checkbox" name="consent_contact" required /><span data-i18n="consentContact">BKS West Bengal may call or message me on this number about booth work, training and verification.</span></label>
+              <label class="checkbox"><input type="checkbox" name="consent_data" required /><span data-i18n="consentData">My details may be kept by BKS West Bengal for organisational records. My phone number and address will not be shown publicly.</span></label>
+            </div>
+
+            <div class="form-actions">
+              <button type="submit" class="button primary" data-i18n="submitBooth">Claim this booth</button>
+              <button type="button" class="button outline" id="downloadBoothForm" data-i18n="downloadBooth">Download my form</button>
+              <button type="button" class="button outline" id="changeBoothBtn" data-i18n="changeBooth">Choose a different booth</button>
+            </div>
+            <p class="form-status" id="boothStatus" data-i18n="boothFormStatus">A BKS worker from your district will call to verify before your booth is confirmed.</p>
+          </form>
+
+          <div class="claim-success" id="claimSuccess" hidden>
+            <p class="eyebrow" data-i18n="successEyebrow">Booth claimed</p>
+            <h3 id="successHeading" data-i18n="successHeading">Your booth is registered.</h3>
+            <p class="claim-code" id="claimCode"></p>
+            <p id="successBody" data-i18n="successBody">Keep this claim code. A BKS West Bengal worker from your district will call you on the number you gave, verify who you are, and then your booth is confirmed. Until that call, your claim holds the booth but is not yet verified.</p>
+            <div class="form-actions">
+              <button type="button" class="button outline" id="downloadReceipt" data-i18n="downloadReceipt">Download my receipt</button>
+              <a class="button primary" href="/volunteer" data-i18n="enrollAnother">Enroll another booth</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section quote-band">
+      <h2 data-i18n="boothQuote">“A village is not organised from Kolkata. It is organised by one person in that village who decided to stand up for the farmers around him.”</h2>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div>
+      <strong data-i18n="footerBrand">Bharatiya Krishak Samaj, West Bengal</strong>
+      <p data-i18n="footerText">A vision platform for farmer dignity, self-reliant agriculture and natural prosperity.</p>
+    </div>
+    <p class="small">Registration No.: S/60440/2007 · भारतीय कृषक समाज · অন্নদাতা</p>
+  </footer>
+
+  <script src="/volunteer.js"></script>
+</body>
+</html>
