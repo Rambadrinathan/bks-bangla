@@ -5,7 +5,7 @@ const APPLICATION_TABLE = 'bks_district_leadership_applications';
 const translations = {
   en: {
     brand:"Bharatiya Krishak Samaj", brandSub:"West Bengal",
-    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal", navVolunteer:"Booth volunteers",
+    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal", navVolunteer:"Booth volunteers", navPuja:"Krishak Samaj Puja",
     boothLinkEyebrow:"Booth Volunteer Network",
     boothLinkTitle:"One farmer volunteer from every booth in West Bengal.",
     boothLinkText:"District leadership is only the top of the structure. The organisation itself is built booth by booth — one Booth Prabhari for each polling booth, who knows the farming families around them by name. Volunteers enroll for their own booth through a separate enrollment system.",
@@ -85,7 +85,7 @@ const translations = {
   },
   hi: {
     brand:"भारतीय कृषक समाज", brandSub:"पश्चिम बंगाल",
-    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल", navVolunteer:"बूथ स्वयंसेवक",
+    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल", navVolunteer:"बूथ स्वयंसेवक", navPuja:"कृषक समाज पूजा",
     boothLinkEyebrow:"बूथ स्वयंसेवक नेटवर्क",
     boothLinkTitle:"पश्चिम बंगाल के हर बूथ से एक किसान स्वयंसेवक।",
     boothLinkText:"जिला नेतृत्व ढाँचे का केवल शिखर है। संगठन तो बूथ दर बूथ बनता है — हर मतदान बूथ पर एक बूथ प्रभारी, जो अपने आसपास के कृषक परिवारों को नाम से जानता है। स्वयंसेवक अपने बूथ के लिए एक अलग पंजीकरण व्यवस्था से जुड़ते हैं।",
@@ -165,7 +165,7 @@ const translations = {
   },
   bn: {
     brand:"ভারতীয় কৃষক সমাজ", brandSub:"পশ্চিমবঙ্গ",
-    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা", navVolunteer:"বুথ স্বেচ্ছাসেবক",
+    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা", navVolunteer:"বুথ স্বেচ্ছাসেবক", navPuja:"কৃষক সমাজ পূজা",
     boothLinkEyebrow:"বুথ স্বেচ্ছাসেবক নেটওয়ার্ক",
     boothLinkTitle:"পশ্চিমবঙ্গের প্রতিটি বুথ থেকে একজন কৃষক স্বেচ্ছাসেবক।",
     boothLinkText:"জেলা নেতৃত্ব কাঠামোর কেবল উপরের স্তর। সংগঠন গড়ে ওঠে বুথ ধরে ধরে — প্রতিটি ভোটগ্রহণ বুথে একজন বুথ প্রভারী, যিনি চারপাশের কৃষক পরিবারগুলিকে নাম ধরে চেনেন। স্বেচ্ছাসেবকরা নিজের বুথের জন্য একটি আলাদা নথিভুক্তি ব্যবস্থার মাধ্যমে যোগ দেন।",

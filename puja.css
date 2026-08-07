@@ -1,0 +1,261 @@
+/* Krishak Samaj Puja — layered on top of /styles.css.
+   Self-contained: this file defines every class the puja page uses that the
+   base stylesheet does not already provide. */
+
+:root{
+  --puja-red:#8f2d1e;
+  --puja-deep:#5d1a10;
+  --puja-gold:#c7902d;
+  --puja-saffron:#e08a2c;
+  --puja-muted:#7a6a60;
+}
+
+.puja-body{
+  background:
+    radial-gradient(circle at top right, rgba(224,138,44,.20), transparent 36rem),
+    linear-gradient(180deg,#fff6ea 0%,#fffdf5 36%,#f7f0e2 100%);
+}
+.puja-body .brand strong{color:var(--puja-deep)}
+.puja-body nav{color:var(--puja-deep)}
+.puja-body nav a:hover{color:var(--puja-red)}
+.puja-body .lang-switch button{color:var(--puja-deep)}
+.puja-body .lang-switch button.active{background:var(--puja-red);color:#fff}
+.puja-body .site-header{background:rgba(255,246,234,.88);border-bottom:1px solid rgba(143,45,30,.16)}
+.puja-body h2{color:var(--puja-deep)}
+.puja-body .hero h1,.puja-body .quote-band h2{color:#fff}
+.puja-body .section p:not(.eyebrow){color:var(--puja-muted)}
+.puja-body .legacy-panel h2,.puja-body .legacy-panel p{color:#fff}
+.puja-body .eyebrow{color:var(--puja-red)}
+.puja-body .hero .eyebrow,
+.puja-body .quote-band .eyebrow{color:var(--puja-gold)}
+
+.puja-hero{
+  min-height:700px;
+  background:
+    linear-gradient(96deg,rgba(59,16,10,.95),rgba(143,45,30,.82) 46%,rgba(143,45,30,.52) 70%,rgba(199,144,45,.32)),
+    url("/assets/appointment/hero-plant-presentation-social-v3.jpeg") center/cover;
+}
+.puja-hero .hero-kicker{
+  border-color:rgba(255,255,255,.34);
+  background:rgba(255,255,255,.12);
+}
+.puja-count-card{text-align:left}
+.coverage-figure{margin:6px 0 18px}
+.coverage-figure strong{
+  display:block;
+  font-family:"Playfair Display", Georgia, serif;
+  font-size:62px;line-height:1;color:var(--puja-red);
+}
+.coverage-figure span{
+  display:block;margin-top:6px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.12em;font-size:12px;color:var(--soil);
+}
+.coverage-split{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.coverage-split strong{display:block;font-size:29px;color:var(--puja-red);line-height:1.1}
+.coverage-split span{
+  display:block;font-size:12px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);margin-top:3px;
+}
+
+/* Leadership strip ------------------------------------------------- */
+.leader-strip{display:grid;gap:16px}
+.leader-strip article{
+  display:grid;grid-template-columns:110px 1fr;gap:18px;align-items:center;
+  background:#fff;border:1px solid var(--line);border-radius:26px;padding:20px;
+  box-shadow:0 14px 40px rgba(93,26,16,.07);
+}
+.leader-strip img{width:110px;height:110px;object-fit:cover;border-radius:20px}
+.leader-strip .portrait-placeholder{
+  width:110px;height:110px;border-radius:20px;display:grid;place-items:center;
+  background:linear-gradient(145deg,var(--puja-deep),var(--puja-red));
+  color:#fff;font-weight:900;font-size:32px;
+}
+.leader-strip h3{margin:2px 0 6px;color:var(--puja-deep);font-size:23px}
+.leader-strip p{margin:0;color:var(--puja-muted);font-size:16px;line-height:1.5}
+
+/* Awards ----------------------------------------------------------- */
+.awards{background:#fffdf5;border-top:1px solid var(--line)}
+.award-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;
+}
+.award-card{
+  position:relative;overflow:hidden;
+  background:#fff;border:1px solid var(--line);border-radius:26px;padding:26px 24px 24px;
+  box-shadow:0 14px 40px rgba(93,26,16,.07);
+}
+.award-card::before{
+  content:"";position:absolute;right:-30px;top:-30px;width:92px;height:92px;border-radius:50%;
+  background:linear-gradient(145deg,rgba(224,138,44,.24),rgba(143,45,30,.14));
+}
+.award-index{
+  position:relative;display:inline-block;margin-bottom:10px;
+  font-family:"Playfair Display", Georgia, serif;font-size:15px;font-weight:700;
+  color:var(--puja-gold);letter-spacing:.1em;
+}
+.award-card h3{position:relative;margin:0 0 8px;color:var(--puja-deep);font-size:22px;line-height:1.2}
+.award-card p{position:relative;margin:0;color:var(--puja-muted);font-size:16px;line-height:1.5}
+.award-footnote,.tier-footnote{
+  margin:22px 0 0;color:var(--muted);font-size:15px;line-height:1.55;max-width:900px;
+}
+
+/* Shared form primitives ------------------------------------------- */
+.claim-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:24px;align-items:start}
+.nominate-guide,.sponsor-panel{position:sticky;top:116px}
+.nominate-guide,.sponsor-panel{background:linear-gradient(145deg,var(--puja-deep),var(--puja-red))}
+.form-subhead{
+  margin:24px 0 12px;color:var(--soil);font-size:13px;font-weight:800;
+  letter-spacing:.12em;text-transform:uppercase;
+}
+.enroll-form h3{margin:0 0 18px;color:var(--puja-deep);font-size:24px}
+.enroll-form label em{font-style:normal;font-weight:600;color:var(--muted)}
+.role-choice{border:1px solid var(--line);border-radius:22px;padding:16px 18px 18px;margin:0 0 20px}
+.role-choice legend{padding:0 8px;color:var(--puja-deep);font-weight:800}
+.role-option{
+  display:flex!important;align-items:flex-start;gap:11px;
+  margin:0 0 8px!important;padding:12px 14px;
+  border:1px solid var(--line);border-radius:16px;background:#fffdf7;cursor:pointer;
+}
+.role-option input{width:auto!important;margin-top:3px}
+.role-option strong{display:block;color:var(--puja-deep)}
+.role-option small{display:block;color:var(--muted);font-weight:600;margin-top:2px}
+.role-option:has(input:checked){border-color:var(--puja-saffron);box-shadow:0 0 0 3px rgba(224,138,44,.15)}
+.checkbox{
+  display:flex!important;align-items:flex-start;gap:10px;margin:0!important;
+  font-weight:600!important;color:#3a2f2b!important;line-height:1.45;
+}
+.checkbox input{width:auto!important;margin-top:3px;flex:0 0 auto}
+.consent-block{
+  display:grid;gap:11px;margin:20px 0;padding:16px 18px;border-radius:20px;
+  background:#f8f2e6;border:1px solid var(--line);font-size:15px;
+}
+.nominator-block{
+  margin-top:6px;padding:4px 18px 8px;border-radius:20px;
+  background:#fbf6ec;border:1px solid var(--line);
+}
+.enroll-form input:focus,.enroll-form select:focus,.enroll-form textarea:focus{
+  border-color:var(--puja-saffron);box-shadow:0 0 0 4px rgba(224,138,44,.15);
+}
+
+.nominate-section{background:#fffdf5;border-top:1px solid var(--line)}
+
+/* Sponsorship ------------------------------------------------------ */
+.sponsor-section{
+  background:
+    radial-gradient(circle at 14% 8%, rgba(224,138,44,.20), transparent 26rem),
+    linear-gradient(140deg,#fffdf5,#f6efdf);
+  border-top:1px solid var(--line);
+}
+.sponsor-why{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:26px 0 32px}
+.sponsor-why article{
+  background:rgba(255,255,255,.9);border:1px solid var(--line);border-radius:22px;padding:20px;
+}
+.sponsor-why h3{margin:0 0 7px;color:var(--puja-deep);font-size:19px;line-height:1.2}
+.sponsor-why p{margin:0;color:var(--puja-muted);font-size:15px;line-height:1.5}
+
+.tier-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.tier-card{
+  display:flex;flex-direction:column;
+  background:#fff;border:1px solid var(--line);border-radius:28px;padding:26px 24px;
+  box-shadow:0 16px 44px rgba(93,26,16,.08);
+}
+.tier-card.featured{
+  background:linear-gradient(160deg,var(--puja-deep),var(--puja-red));
+  border-color:rgba(255,255,255,.2);
+}
+.tier-card.featured h3,.tier-card.featured .tier-amount{color:#fff}
+.tier-card.featured .tier-note,.tier-card.featured li{color:rgba(255,255,255,.86)}
+.tier-card.featured .tier-slots{background:rgba(255,255,255,.16);color:#f8d98a}
+.tier-card.featured li::before{background:var(--puja-gold)}
+.tier-slots{
+  align-self:flex-start;margin:0 0 12px;padding:5px 11px;border-radius:999px;
+  background:rgba(143,45,30,.09);color:var(--puja-red);
+  font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;
+}
+.tier-card h3{margin:0 0 6px;color:var(--puja-deep);font-size:22px;line-height:1.2}
+.tier-amount{
+  margin:0 0 4px;font-family:"Playfair Display", Georgia, serif;
+  font-size:32px;color:var(--puja-red);line-height:1.1;
+}
+.tier-note{margin:0 0 14px;color:var(--puja-muted);font-size:14px;font-weight:600}
+.tier-card ul{margin:0 0 20px;padding:0;list-style:none;display:grid;gap:9px}
+.tier-card li{position:relative;padding-left:20px;color:#42352f;font-size:15px;line-height:1.45}
+.tier-card li::before{
+  content:"";position:absolute;left:0;top:8px;width:8px;height:8px;border-radius:50%;
+  background:var(--puja-saffron);
+}
+.tier-card .button{margin-top:auto;text-align:center}
+
+.sponsor-layout{display:grid;grid-template-columns:.72fr 1.28fr;gap:24px;align-items:start;margin-top:34px}
+.sponsor-direct{
+  margin:18px 0 0;padding:14px 16px;border-radius:18px;
+  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.24);
+}
+.sponsor-direct .eyebrow{color:#f4c15d;margin-bottom:6px}
+.sponsor-direct p{margin:0;color:#fff;font-weight:800}
+
+.sponsor-wall{margin-top:38px}
+.wall-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:14px}
+.wall-item{
+  background:#fff;border:1px solid var(--line);border-radius:18px;padding:18px;text-align:center;
+}
+.wall-item strong{display:block;color:var(--puja-deep);font-size:17px}
+.wall-item span{
+  display:block;margin-top:4px;font-size:12px;font-weight:800;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);
+}
+
+/* Visiting --------------------------------------------------------- */
+.visit-section{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+.visit-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:24px;
+  border:1px solid var(--line);border-radius:22px;overflow:hidden;background:var(--line)}
+.visit-facts div{padding:16px 18px;background:#fff}
+.visit-facts span{
+  display:block;font-size:12px;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:5px;
+}
+.visit-facts strong{display:block;color:var(--puja-deep);font-size:19px;line-height:1.2}
+.visit-facts small{display:block;margin-top:5px;color:var(--muted);font-size:13px;line-height:1.4}
+.programme-list{display:grid;gap:16px}
+.programme-list div{
+  background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px 22px;
+}
+.programme-list strong{display:block;color:var(--puja-deep);font-size:20px;margin-bottom:4px}
+.programme-list span{display:block;color:var(--puja-muted);line-height:1.5}
+
+/* Press ------------------------------------------------------------ */
+.press-section{background:#fffdf5;border-top:1px solid var(--line)}
+.press-facts{margin:0 0 22px;padding:0;list-style:none;display:grid;gap:12px;max-width:1000px}
+.press-facts li{
+  position:relative;padding:16px 18px 16px 48px;
+  background:#fff;border:1px solid var(--line);border-radius:20px;
+  color:#3d3330;line-height:1.55;
+}
+.press-facts li::before{
+  content:"";position:absolute;left:20px;top:23px;width:12px;height:12px;border-radius:50%;
+  background:var(--puja-saffron);box-shadow:0 0 0 4px rgba(224,138,44,.18);
+}
+.press-facts strong{color:var(--puja-deep)}
+.press-section .download-row a{background:var(--puja-red)}
+
+.puja-body .quote-band{background:linear-gradient(135deg,var(--puja-deep),var(--puja-red))}
+.puja-body .footer{background:#3b1009}
+.puja-body .button.primary{background:var(--puja-red);border-color:var(--puja-red)}
+.puja-body .legacy-panel .button.outline{margin-top:16px;display:inline-block}
+
+.claim-layout,.sponsor-layout,.enroll-form,.tier-card{scroll-margin-top:112px}
+
+@media (max-width:1080px){
+  .award-grid,.sponsor-why,.tier-grid,.wall-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:980px){
+  .claim-layout,.sponsor-layout,.visit-section{grid-template-columns:1fr}
+  .nominate-guide,.sponsor-panel{position:static}
+  .visit-facts{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .award-grid,.sponsor-why,.tier-grid,.wall-grid,.coverage-split{grid-template-columns:1fr}
+  .leader-strip article{grid-template-columns:1fr}
+  .leader-strip img,.leader-strip .portrait-placeholder{width:100%;height:180px}
+  .coverage-figure strong{font-size:50px}
+  .press-facts li{padding:14px 16px 14px 42px}
+}
