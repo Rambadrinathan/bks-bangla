@@ -547,10 +547,22 @@ async function loadBooths(){
   populateBoothSelect();
 }
 
+/* Read the AC from the constituency dropdown when that is the live control,
+   not from #finderAcNo. loadConstituencies() and loadBooths() both listen for
+   changes on the dropdown and the listener order depends on which fetch
+   resolved first — going via #finderAcNo would read a stale AC whenever the
+   booth listener happens to run before the constituency one has copied the
+   number across. */
+function currentAcNo(){
+  const fromSelect = els.acName && !els.acName.classList.contains('hidden')
+    ? parseInt(els.acName.value, 10) : NaN;
+  return Number.isNaN(fromSelect) ? parseInt(els.acNo.value, 10) : fromSelect;
+}
+
 function populateBoothSelect(){
   if(!els.boothSelect || boothState.manualBooth) return;
   const rows = boothState.booths || [];
-  const acNo = parseInt(els.acNo.value, 10);
+  const acNo = currentAcNo();
   const scoped = acNo ? rows.filter(row => row.ac_no === acNo) : [];
 
   if(!scoped.length){
@@ -569,6 +581,10 @@ function populateBoothSelect(){
   els.boothSelect.classList.remove('hidden');
   els.boothNo.classList.add('hidden');
   els.boothNo.required = false;
+  /* checkBooth() reads #finderBoothNo, so clear it alongside the rebuilt list —
+     otherwise the booth number from the previously chosen constituency
+     survives into the availability check. */
+  els.boothNo.value = '';
   els.boothSelect.onchange = ()=>{ els.boothNo.value = els.boothSelect.value; };
 }
 
@@ -822,6 +838,7 @@ if(els.checkBtn){
 if(els.district){
   els.district.addEventListener('change', ()=>{
     if(boothState.constituencies) populateConstituencySelect();
+    populateBoothSelect();
   });
 }
 
