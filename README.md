@@ -55,6 +55,18 @@ from the official CEO West Bengal roll data. Until then the site falls back to
 manual AC number entry and everything still works; once loaded, the
 constituency field becomes a district-filtered dropdown with Bengali names and
 true coverage percentages become possible.
+
+`bks_wb_booths` also ships empty — the actual West Bengal polling booth list
+(~80,000 booths) has not been supplied yet. Load `ac_no`, `booth_no`,
+`booth_name`, `gram_panchayat_or_ward`, `village_or_para`, `district` from the
+official CEO West Bengal polling station list, in full or a district at a
+time — partial loads are fine. Wherever a booth exists in this table, the
+picker becomes District → Constituency → Booth (a real dropdown, showing the
+booth building or village); wherever it doesn't, the booth field stays a
+free-text number, and "My booth isn't listed" always offers that manual path
+even after the dropdown is loaded. See §8 of
+[`DESIGN-booth-volunteer-platform.md`](DESIGN-booth-volunteer-platform.md)
+for why the manual escape hatch is permanent, not a launch-day stopgap.
 - **Krishak Samaj Puja** (`/puja`) — the agriculture-themed Durga Puja, its farmer awards, nominations and sponsorship
 - Supabase-ready SQL schemas
 

@@ -48,6 +48,7 @@ const translations = {
     finderTitle:"Step 1 · Locate your booth",
     fieldDistrict:"District", selectDistrict:"Select district",
     fieldAc:"Assembly constituency", fieldBoothNo:"Booth / part number", checkBooth:"Check this booth",
+    boothNotListed:"My booth isn't listed",
     formTitle:"Step 2 · Your details",
     fieldRole:"Role at this booth",
     rolePrabhari:"Booth Prabhari", rolePrabhariNote:"Booth in-charge · one per booth",
@@ -148,6 +149,7 @@ const translations = {
     finderTitle:"चरण 1 · अपना बूथ खोजिए",
     fieldDistrict:"जिला", selectDistrict:"जिला चुनिए",
     fieldAc:"विधानसभा क्षेत्र", fieldBoothNo:"बूथ / भाग संख्या", checkBooth:"इस बूथ की जाँच करें",
+    boothNotListed:"मेरा बूथ सूची में नहीं है",
     formTitle:"चरण 2 · आपका विवरण",
     fieldRole:"इस बूथ पर आपकी भूमिका",
     rolePrabhari:"बूथ प्रभारी", rolePrabhariNote:"बूथ प्रमुख · प्रति बूथ एक",
@@ -248,6 +250,7 @@ const translations = {
     finderTitle:"ধাপ ১ · আপনার বুথ খুঁজুন",
     fieldDistrict:"জেলা", selectDistrict:"জেলা বাছুন",
     fieldAc:"বিধানসভা কেন্দ্র", fieldBoothNo:"বুথ / পার্ট নম্বর", checkBooth:"এই বুথ যাচাই করুন",
+    boothNotListed:"আমার বুথ তালিকায় নেই",
     formTitle:"ধাপ ২ · আপনার তথ্য",
     fieldRole:"এই বুথে আপনার ভূমিকা",
     rolePrabhari:"বুথ প্রভারী", rolePrabhariNote:"বুথ দায়িত্বপ্রাপ্ত · প্রতি বুথে একজন",
@@ -411,7 +414,9 @@ const boothState = {
   supportCount: 0,
   supportLimit: SUPPORT_LIMIT,
   checked: false,
-  liveCheck: true
+  liveCheck: true,
+  booths: null,
+  manualBooth: false
 };
 
 const els = {
@@ -420,6 +425,8 @@ const els = {
   acName: document.getElementById('finderAcName'),
   acNameText: document.getElementById('finderAcNameText'),
   boothNo: document.getElementById('finderBoothNo'),
+  boothSelect: document.getElementById('finderBoothSelect'),
+  boothNotListedBtn: document.getElementById('boothNotListedBtn'),
   checkBtn: document.getElementById('checkBoothBtn'),
   result: document.getElementById('boothResult'),
   form: document.getElementById('boothVolunteerForm'),
@@ -506,7 +513,63 @@ async function loadConstituencies(){
       els.acName.value = String(match.ac_no);
       boothState.ac_name = match.ac_name;
     }
+    populateBoothSelect();
   });
+}
+
+/* Booth reference — ships empty (see supabase-bks-booth-volunteers.sql §1b).
+   When it has rows for the chosen AC, the free-text booth number becomes a
+   dropdown. "My booth isn't listed" always stays available, because a
+   loaded list may only cover some ACs, or some booths within an AC — partial
+   coverage must never block an enrollment. */
+async function loadBooths(){
+  if(!els.boothSelect) return;
+  let rows = [];
+  try{
+    rows = await selectFrom('bks_wb_booths', 'select=ac_no,booth_no,booth_name,gram_panchayat_or_ward,village_or_para&order=booth_no');
+  }catch(error){
+    console.info('Booth reference not loaded, falling back to manual entry.', error);
+  }
+  if(!Array.isArray(rows) || rows.length === 0) return;
+
+  boothState.booths = rows;
+  els.boothNotListedBtn.classList.remove('hidden');
+  els.boothNotListedBtn.addEventListener('click', ()=>{
+    boothState.manualBooth = true;
+    els.boothSelect.classList.add('hidden');
+    els.boothNo.classList.remove('hidden');
+    els.boothNo.required = true;
+    els.boothNo.focus();
+  });
+  if(els.acName){
+    els.acName.addEventListener('change', populateBoothSelect);
+  }
+  populateBoothSelect();
+}
+
+function populateBoothSelect(){
+  if(!els.boothSelect || boothState.manualBooth) return;
+  const rows = boothState.booths || [];
+  const acNo = parseInt(els.acNo.value, 10);
+  const scoped = acNo ? rows.filter(row => row.ac_no === acNo) : [];
+
+  if(!scoped.length){
+    els.boothSelect.classList.add('hidden');
+    els.boothNo.classList.remove('hidden');
+    els.boothNo.required = true;
+    return;
+  }
+
+  els.boothSelect.innerHTML = `<option value="">${t('optSelect')}</option>` +
+    scoped.map(row => {
+      const place = row.village_or_para || row.gram_panchayat_or_ward || '';
+      const label = row.booth_name ? `${row.booth_no} · ${row.booth_name}` : `${row.booth_no}${place ? ' · ' + place : ''}`;
+      return `<option value="${row.booth_no}">${label}</option>`;
+    }).join('');
+  els.boothSelect.classList.remove('hidden');
+  els.boothNo.classList.add('hidden');
+  els.boothNo.required = false;
+  els.boothSelect.onchange = ()=>{ els.boothNo.value = els.boothSelect.value; };
 }
 
 function populateConstituencySelect(){
@@ -788,4 +851,5 @@ async function loadCoverage(){
 
 setLanguage(localStorage.getItem('bksLang') || 'en');
 loadConstituencies();
+loadBooths();
 loadCoverage();

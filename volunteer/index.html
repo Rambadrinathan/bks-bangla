@@ -153,7 +153,11 @@
                 </span>
               </label>
               <label><span data-i18n="fieldBoothNo">Booth / part number</span>
-                <input id="finderBoothNo" type="number" min="1" max="3000" inputmode="numeric" required />
+                <span class="booth-input-row">
+                  <select id="finderBoothSelect" class="hidden"></select>
+                  <input id="finderBoothNo" type="number" min="1" max="3000" inputmode="numeric" required />
+                </span>
+                <button type="button" id="boothNotListedBtn" class="link-btn hidden" data-i18n="boothNotListed">My booth isn't listed</button>
               </label>
             </div>
             <div class="form-actions">
