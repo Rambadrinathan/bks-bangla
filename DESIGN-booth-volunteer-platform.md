@@ -154,6 +154,7 @@ Each one degrades to something a farmer can still act on:
 | Failure | Behaviour |
 |---|---|
 | Constituency table empty or unreachable | AC name becomes a free-text box next to the AC number; enrollment still works |
+| Booth table empty, unreachable, or has no row for this AC | Booth number becomes a free-text box, same as today; "My booth isn't listed" also lets a volunteer opt into free text even when the dropdown has data |
 | Availability RPC unavailable | Banner says live checking is off, form still opens, clashes resolved at verification |
 | Claim RPC unavailable | The filled form downloads as JSON and the volunteer is told to WhatsApp it to their district team |
 
@@ -172,6 +173,39 @@ Load `ac_no, ac_name, ac_name_bn, district, total_booths` from the CEO West
 Bengal roll. Once populated, the site automatically upgrades the AC field from
 a free-text box to a district-filtered dropdown showing Bengali names, and
 `total_booths` allows a true coverage percentage instead of a raw count.
+
+### The booth picker: District → Constituency → Booth
+
+`bks_wb_booths` (`ac_no, booth_no, booth_name, gram_panchayat_or_ward,
+village_or_para, district`) is the third reference table, also **empty on
+purpose**, ~80,000 rows at full West Bengal coverage. As of this design pass
+the actual booth list has not been supplied — no CEO West Bengal polling
+station file exists anywhere in the project yet.
+
+**Decision made without that file in hand:** build the picker to treat the
+list as *permanently possibly-partial*, not as an all-or-nothing switch:
+
+- when a row exists for the chosen AC, the booth field becomes a dropdown
+  (booth number + building/village, for recognition);
+- when it doesn't — AC not loaded at all, or this specific booth missing from
+  a partial load — it silently falls back to the existing free-text booth
+  number, exactly like the AC fallback in §7;
+- **"My booth isn't listed" is always present once any booth data has
+  loaded**, and switches to manual entry on demand. It is never removed,
+  because there is no load of this data — full or partial — that this
+  project can independently verify against the ground truth of every villager's
+  voter slip.
+
+This means: if a full ~80,000-row CEO file is loaded later, the manual
+fallback and the escape hatch stay in the code. They cost nothing when the
+dropdown covers everyone, and they are the only thing standing between a
+data gap and a farmer who cannot enroll. Removing them would require
+certainty about coverage that no single file delivery actually provides.
+
+**Still to load:** `ac_no, booth_no, booth_name, gram_panchayat_or_ward,
+village_or_para, district` from the CEO West Bengal polling station list.
+Partial loads (a few districts first) are fine and expected — see the
+comment on `bks_wb_booths` in `supabase-bks-booth-volunteers.sql`.
 
 ## 9. What comes next
 
@@ -195,7 +229,7 @@ In rough priority order:
 
 | File | Role |
 |---|---|
-| `supabase-bks-booth-volunteers.sql` | Schema, indexes, RLS, views, claim + availability functions |
+| `supabase-bks-booth-volunteers.sql` | Schema, indexes, RLS, views, claim + availability functions, `bks_wb_booths` reference |
 | `volunteer/index.html` | The enrollment page |
 | `volunteer.js` | Trilingual UI, availability check, claim submission, fallbacks |
 | `styles.css` | Booth section styles appended to the shared stylesheet |

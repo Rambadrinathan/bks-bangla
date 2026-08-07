@@ -32,6 +32,29 @@ comment on table public.bks_wb_constituencies is
   'Reference list of the 294 West Bengal assembly constituencies. Load from the official CEO West Bengal roll data. total_booths, when filled, lets the site validate booth numbers and compute true coverage percentages.';
 
 -- ---------------------------------------------------------------------------
+-- 1b. Booth reference (populate from the official CEO West Bengal polling
+--     station list before go-live; the site works without it, falling back
+--     to manual booth-number entry — see DESIGN-booth-volunteer-platform.md §7).
+--     Load whatever coverage you have, even partial: the picker only offers
+--     booths that are actually in this table and shows "my booth isn't
+--     listed" for every AC, so a partial list never blocks anyone.
+-- ---------------------------------------------------------------------------
+
+create table if not exists public.bks_wb_booths (
+  ac_no smallint not null check (ac_no between 1 and 294),
+  booth_no integer not null check (booth_no between 1 and 3000),
+  booth_name text,                        -- polling station building, e.g. school name
+  gram_panchayat_or_ward text,
+  village_or_para text,
+  district text,
+  updated_at timestamptz not null default now(),
+  primary key (ac_no, booth_no)
+);
+
+comment on table public.bks_wb_booths is
+  'Reference list of West Bengal polling booths (ac_no, booth_no) with location context, for the cascading District -> Constituency -> Booth picker on /volunteer. Ships empty. Load from the official CEO West Bengal polling station list, in full or in part — the picker degrades to manual booth-number entry per AC when a booth is not found here, so partial coverage is safe to load.';
+
+-- ---------------------------------------------------------------------------
 -- 2. Booth volunteer enrollments
 -- ---------------------------------------------------------------------------
 
@@ -131,6 +154,7 @@ create index if not exists bks_booth_volunteers_claim_code_idx
 
 alter table public.bks_booth_volunteers enable row level security;
 alter table public.bks_wb_constituencies enable row level security;
+alter table public.bks_wb_booths enable row level security;
 
 revoke all on public.bks_booth_volunteers from anon, authenticated;
 
@@ -142,6 +166,15 @@ to anon, authenticated
 using (true);
 
 grant select on public.bks_wb_constituencies to anon, authenticated;
+
+drop policy if exists "public_read_bks_booths" on public.bks_wb_booths;
+create policy "public_read_bks_booths"
+on public.bks_wb_booths
+for select
+to anon, authenticated
+using (true);
+
+grant select on public.bks_wb_booths to anon, authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 4. Public, privacy-safe views
