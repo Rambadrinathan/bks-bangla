@@ -79,6 +79,7 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 const translations = {
   en: {
     brand:"Krishak Samaj Puja", brandSub:"Bharatiya Krishak Samaj · West Bengal",
+    provisional:"Details on this page are provisional. Dates, venue and sponsorship amounts are being finalised by Bharatiya Krishak Samaj, West Bengal and will be confirmed before any commitment.",
     navTheme:"The theme", navAwards:"Awards", navNominate:"Nominate", navSponsor:"Sponsor", navVisit:"Visit",
     heroKicker:"First of its kind in West Bengal",
     heroTitle:"A Durga Puja for the annadata.",
@@ -213,6 +214,7 @@ const translations = {
 
   hi: {
     brand:"कृषक समाज पूजा", brandSub:"भारतीय कृषक समाज · पश्चिम बंगाल",
+    provisional:"इस पृष्ठ की जानकारी अनंतिम है। तिथि, स्थान और प्रायोजन राशि भारतीय कृषक समाज, पश्चिम बंगाल द्वारा अंतिम रूप ले रही है और किसी भी प्रतिबद्धता से पहले पुष्ट की जाएगी।",
     navTheme:"थीम", navAwards:"पुरस्कार", navNominate:"नामांकन", navSponsor:"प्रायोजन", navVisit:"पंडाल",
     heroKicker:"पश्चिम बंगाल में अपनी तरह की पहली",
     heroTitle:"अन्नदाता के लिए एक दुर्गा पूजा।",
@@ -347,6 +349,7 @@ const translations = {
 
   bn: {
     brand:"কৃষক সমাজ পূজা", brandSub:"ভারতীয় কৃষক সমাজ · পশ্চিমবঙ্গ",
+    provisional:"এই পাতার তথ্য অস্থায়ী। তারিখ, স্থান ও পৃষ্ঠপোষকতার অঙ্ক ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ চূড়ান্ত করছে এবং কোনও প্রতিশ্রুতির আগে নিশ্চিত করা হবে।",
     navTheme:"থিম", navAwards:"পুরস্কার", navNominate:"মনোনয়ন", navSponsor:"পৃষ্ঠপোষকতা", navVisit:"প্যান্ডেল",
     heroKicker:"পশ্চিমবঙ্গে এই ধরনের প্রথম",
     heroTitle:"অন্নদাতার জন্য একটি দুর্গাপূজা।",
