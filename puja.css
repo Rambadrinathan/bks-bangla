@@ -31,9 +31,12 @@
 
 .puja-hero{
   min-height:700px;
+  /* The idol sits mid-frame, so the scrim has to fall away fast after the
+     copy column or Durga disappears behind it. Keep the first two stops
+     heavy enough for white text, then let the photograph through. */
   background:
-    linear-gradient(96deg,rgba(59,16,10,.95),rgba(143,45,30,.82) 46%,rgba(143,45,30,.52) 70%,rgba(199,144,45,.32)),
-    url("/assets/appointment/hero-plant-presentation-social-v3.jpeg") center/cover;
+    linear-gradient(96deg,rgba(30,8,5,.94) 0%,rgba(72,18,11,.82) 32%,rgba(96,26,16,.42) 60%,rgba(96,26,16,.24) 100%),
+    url("/assets/puja-2025/idol-durga-2025.jpg") 52% 38%/cover;
 }
 .puja-hero .hero-kicker{
   border-color:rgba(255,255,255,.34);
@@ -246,13 +249,86 @@
 
 .claim-layout,.sponsor-layout,.enroll-form,.tier-card{scroll-margin-top:112px}
 
+/* --- 2025 track record ------------------------------------------------- */
+.hero-credit{
+  margin:20px 0 0;max-width:640px;
+  font-size:13px;line-height:1.6;color:rgba(255,255,255,.72);
+}
+.hero-credit a{color:#ffd9a1;text-decoration:underline}
+.hero-credit a:hover{color:#fff}
+
+.record-2025{background:#fffdf5;border-top:1px solid var(--line);scroll-margin-top:112px}
+.record-figure{margin:0 0 30px}
+.record-figure img{width:100%;height:auto;border-radius:22px;display:block;object-fit:cover;max-height:460px}
+.record-figure figcaption{
+  margin-top:11px;font-size:14px;line-height:1.6;color:var(--puja-muted);max-width:760px;
+}
+.record-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:14px}
+.record-stats div{
+  padding:20px 18px;border-radius:20px;
+  background:#fff;border:1px solid rgba(93,26,16,.14);
+}
+.record-stats strong{
+  display:block;font-family:"Playfair Display",serif;font-size:38px;line-height:1.05;
+  color:var(--puja-red);margin-bottom:7px;
+}
+.record-stats span{display:block;font-size:14px;line-height:1.5;color:var(--puja-muted)}
+.record-source{
+  margin:0 0 34px;font-size:13px;line-height:1.6;color:var(--puja-muted);max-width:860px;font-style:italic;
+}
+.record-split{display:grid;grid-template-columns:1fr 340px;gap:34px;align-items:start;margin-bottom:38px}
+.record-facts{margin:0;padding:0;list-style:none;display:grid;gap:13px}
+.record-facts li{
+  padding:16px 18px 16px 46px;position:relative;border-radius:18px;
+  background:#fff;border:1px solid rgba(93,26,16,.14);
+  font-size:15px;line-height:1.65;color:#4a3b34;
+}
+.record-facts li::before{
+  content:"";position:absolute;left:20px;top:23px;
+  width:9px;height:9px;border-radius:50%;background:var(--puja-gold);
+}
+.record-facts strong{color:var(--puja-deep)}
+.record-portrait{margin:0}
+.record-portrait img{width:100%;height:auto;border-radius:22px;display:block}
+
+.record-block{margin-bottom:38px}
+.record-block h3{
+  font-family:"Playfair Display",serif;font-size:27px;color:var(--puja-deep);margin:0 0 9px;
+}
+.record-block > p{margin:0 0 20px;max-width:880px;line-height:1.7;color:#4a3b34}
+.record-startups{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.record-startups article{
+  padding:19px 18px;border-radius:20px;background:#fff;
+  border:1px solid rgba(93,26,16,.14);
+}
+.record-startups h4{margin:0 0 7px;font-size:16px;color:var(--puja-red)}
+.record-startups p{margin:0;font-size:14px;line-height:1.6;color:var(--puja-muted)}
+
+.record-reels{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.reel-card{
+  display:grid;gap:9px;padding:20px 19px;border-radius:20px;text-decoration:none;
+  background:#fff;border:1px solid rgba(93,26,16,.14);transition:border-color .18s,transform .18s;
+}
+.reel-card:hover{border-color:var(--puja-gold);transform:translateY(-2px)}
+.reel-handle{font-size:13px;font-weight:700;color:var(--puja-muted)}
+.reel-quote{font-size:15px;line-height:1.6;color:var(--puja-deep)}
+.reel-link{font-size:13px;font-weight:700;color:var(--puja-red)}
+
+.record-links{display:flex;flex-wrap:wrap;gap:12px}
+.record-links .button.outline{border-color:rgba(93,26,16,.3);color:var(--puja-deep)}
+.record-links .button.outline:hover{border-color:var(--puja-red);color:var(--puja-red)}
+
 @media (max-width:1080px){
   .award-grid,.sponsor-why,.tier-grid,.wall-grid{grid-template-columns:repeat(2,1fr)}
+  .record-stats,.record-startups{grid-template-columns:repeat(2,1fr)}
 }
 @media (max-width:980px){
   .claim-layout,.sponsor-layout,.visit-section{grid-template-columns:1fr}
   .nominate-guide,.sponsor-panel{position:static}
   .visit-facts{grid-template-columns:1fr}
+  .record-split{grid-template-columns:1fr}
+  .record-portrait img{max-height:420px;object-fit:cover;object-position:center 28%}
+  .record-reels{grid-template-columns:1fr}
 }
 @media (max-width:620px){
   .award-grid,.sponsor-why,.tier-grid,.wall-grid,.coverage-split{grid-template-columns:1fr}
@@ -260,6 +336,10 @@
   .leader-strip img,.leader-strip .portrait-placeholder{width:100%;height:180px}
   .coverage-figure strong{font-size:50px}
   .press-facts li{padding:14px 16px 14px 42px}
+  .record-stats,.record-startups{grid-template-columns:1fr}
+  .record-stats strong{font-size:33px}
+  .record-figure img{max-height:280px}
+  .record-links .button{width:100%;text-align:center}
 }
 
 .provisional-note{padding:11px 7vw;background:#3b1009;color:#ffe9c9;font-size:14px;line-height:1.5;text-align:center}
