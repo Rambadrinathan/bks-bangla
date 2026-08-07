@@ -87,6 +87,8 @@ const translations = {
       needAc:"Enter your assembly constituency number, between 1 and 294.",
       needBooth:"Enter your booth number.",
       checking:"Checking this booth…",
+      boothNamed:"Booth {booth}, {acname} — {name}.",
+      boothNotFound:"No booth {booth} is listed in {acname}; its booths run up to {max}. Please check the number on your voter slip. You can still enroll — the BKS team will correct it during verification.",
       available:"Booth {booth} in constituency {ac} is open. You can claim it as Booth Prabhari.",
       takenBy:"Booth {booth} in constituency {ac} already has a Booth Prabhari — {name}. You can still enroll as a Booth Sahayak, or choose the booth where you actually vote.",
       takenFull:"Booth {booth} in constituency {ac} is fully staffed: it has a Prabhari and {count} support volunteers. Please choose another booth, or contact your district team.",
@@ -187,6 +189,8 @@ const translations = {
       needAc:"अपना विधानसभा क्षेत्र क्रमांक भरिए, 1 से 294 के बीच।",
       needBooth:"अपना बूथ क्रमांक भरिए।",
       checking:"इस बूथ की जाँच हो रही है…",
+      boothNamed:"बूथ {booth}, {acname} — {name}।",
+      boothNotFound:"{acname} में बूथ {booth} दर्ज नहीं है; वहाँ बूथ {max} तक हैं। कृपया अपनी मतदाता पर्ची पर क्रमांक देखिए। आप फिर भी पंजीकरण कर सकते हैं — सत्यापन के समय BKS दल इसे सुधार देगा।",
       available:"क्षेत्र {ac} का बूथ {booth} खाली है। आप इसे बूथ प्रभारी के रूप में ले सकते हैं।",
       takenBy:"क्षेत्र {ac} के बूथ {booth} पर पहले से बूथ प्रभारी हैं — {name}। आप बूथ सहायक के रूप में जुड़ सकते हैं, या वही बूथ चुनिए जहाँ आप मतदान करते हैं।",
       takenFull:"क्षेत्र {ac} का बूथ {booth} पूरी तरह भरा है: वहाँ एक प्रभारी और {count} सहायक हैं। कृपया दूसरा बूथ चुनिए या अपने जिला दल से संपर्क कीजिए।",
@@ -287,6 +291,8 @@ const translations = {
       needAc:"আপনার বিধানসভা কেন্দ্রের নম্বর দিন, ১ থেকে ২৯৪-এর মধ্যে।",
       needBooth:"আপনার বুথ নম্বর দিন।",
       checking:"এই বুথ যাচাই করা হচ্ছে…",
+      boothNamed:"বুথ {booth}, {acname} — {name}।",
+      boothNotFound:"{acname}-এ {booth} নম্বর বুথের কোনও নথি নেই; সেখানে বুথ {max} পর্যন্ত আছে। অনুগ্রহ করে আপনার ভোটার স্লিপে নম্বরটি দেখে নিন। আপনি তবুও নথিভুক্ত হতে পারেন — যাচাইয়ের সময় BKS দল এটি ঠিক করে দেবে।",
       available:"কেন্দ্র {ac}-এর বুথ {booth} খালি আছে। আপনি বুথ প্রভারী হিসেবে এটি নিতে পারেন।",
       takenBy:"কেন্দ্র {ac}-এর বুথ {booth}-এ ইতিমধ্যেই একজন বুথ প্রভারী আছেন — {name}। আপনি বুথ সহায়ক হিসেবে যোগ দিতে পারেন, অথবা যে বুথে আপনি ভোট দেন সেটিই বাছুন।",
       takenFull:"কেন্দ্র {ac}-এর বুথ {booth} সম্পূর্ণ পূর্ণ: সেখানে একজন প্রভারী ও {count} জন সহায়ক আছেন। অনুগ্রহ করে অন্য বুথ বাছুন বা আপনার জেলা দলের সঙ্গে যোগাযোগ করুন।",
@@ -406,6 +412,9 @@ const boothState = {
   ac_no: null,
   ac_name: '',
   booth_no: null,
+  booth_name: '',          // from the ECI booth reference, when we can resolve it
+  boothKnown: null,        // true / false / null when the reference is unavailable
+  acMaxPart: null,         // highest part number in this AC, for validation
   prabhariTaken: false,
   heldBy: '',
   supportCount: 0,
@@ -433,10 +442,17 @@ const els = {
   roleChoice: document.getElementById('roleChoice')
 };
 
-function showResult(kind, message){
+function showResult(kind, message, lead){
   els.result.hidden = false;
   els.result.className = `booth-result ${kind}`;
-  els.result.textContent = message;
+  els.result.textContent = '';
+  if(lead){
+    const strong = document.createElement('strong');
+    strong.className = 'booth-identity';
+    strong.textContent = lead;
+    els.result.appendChild(strong);
+  }
+  els.result.appendChild(document.createTextNode(message));
 }
 
 function refreshBoothChip(){
@@ -483,7 +499,7 @@ async function loadConstituencies(){
   if(!els.acName) return;
   let rows = [];
   try{
-    rows = await selectFrom('bks_wb_constituencies', 'select=ac_no,ac_name,ac_name_bn,district&order=ac_no');
+    rows = await selectFrom('bks_wb_constituencies', 'select=ac_no,ac_name,ac_name_bn,district,total_booths,max_part_no&order=ac_no');
   }catch(error){
     console.info('Constituency reference not loaded, falling back to manual entry.', error);
   }
@@ -521,6 +537,27 @@ function populateConstituencySelect(){
     }).join('');
 }
 
+/* Resolve a booth number to the building it sits in, from the ECI booth
+   reference (bks_wb_booths). Returns the part name, '' when that booth is not
+   in the reference, or null when the reference itself is unreachable — the
+   three cases mean different things to the volunteer and are kept distinct. */
+async function lookupBoothName(acNo, boothNo){
+  try{
+    const rows = await selectFrom('bks_wb_booths',
+      `select=part_name&ac_no=eq.${acNo}&part_no=eq.${boothNo}&limit=1`);
+    if(!Array.isArray(rows)) return null;
+    return rows.length ? (rows[0].part_name || '') : '';
+  }catch(error){
+    console.info('Booth reference unavailable:', error);
+    return null;
+  }
+}
+
+function constituencyLabel(){
+  const name = boothState.ac_name;
+  return name ? `${boothState.ac_no} · ${name}` : `${t('fieldAc')} ${boothState.ac_no}`;
+}
+
 async function checkBooth(){
   const district = els.district.value.trim();
   const acNo = parseInt(els.acNo.value, 10);
@@ -537,8 +574,15 @@ async function checkBooth(){
     ? boothState.ac_name
     : els.acNameText.value.trim();
 
+  const ref = (boothState.constituencies || []).find(row => Number(row.ac_no) === acNo);
+  boothState.acMaxPart = ref && ref.max_part_no ? Number(ref.max_part_no) : null;
+
   showResult('checking', rt('checking'));
   els.checkBtn.disabled = true;
+
+  // The booth name lookup rides alongside the availability check, not after it,
+  // so confirming the booth costs no extra wait in the field.
+  const namePromise = lookupBoothName(acNo, boothNo);
 
   try{
     const info = await callRpc('bks_booth_availability', { p_ac_no: acNo, p_booth_no: boothNo });
@@ -557,6 +601,17 @@ async function checkBooth(){
     els.checkBtn.disabled = false;
   }
 
+  const partName = await namePromise;
+  boothState.boothKnown = partName === null ? null : partName !== '';
+  boothState.booth_name = partName || '';
+
+  // Show the volunteer the building we hold for that number, and pre-fill the
+  // booth building field so they confirm a real name instead of typing one.
+  const boothNameInput = els.form && els.form.elements.booth_name;
+  if(boothNameInput && boothState.booth_name && !boothNameInput.value.trim()){
+    boothNameInput.value = boothState.booth_name;
+  }
+
   boothState.checked = true;
   renderAvailability();
 }
@@ -564,23 +619,42 @@ async function checkBooth(){
 function renderAvailability(){
   const vars = { ac: boothState.ac_no, booth: boothState.booth_no };
 
+  // What the ECI booth reference says this booth is. Shown above the
+  // availability line so the volunteer confirms the building, not just a
+  // number. An unknown number is a warning, never a block: a volunteer in the
+  // field with a mistyped part number is still a volunteer we want.
+  let lead = '';
+  if(boothState.boothKnown === true){
+    lead = rt('boothNamed', {
+      booth: boothState.booth_no,
+      acname: constituencyLabel(),
+      name: boothState.booth_name
+    });
+  } else if(boothState.boothKnown === false && boothState.acMaxPart){
+    lead = rt('boothNotFound', {
+      booth: boothState.booth_no,
+      acname: constituencyLabel(),
+      max: boothState.acMaxPart
+    });
+  }
+
   if(!boothState.liveCheck){
-    showResult('warn', rt('offlineCheck'));
+    showResult('warn', rt('offlineCheck'), lead);
     els.guideTitle.textContent = t('formTitle');
     els.guidePrompt.textContent = rt('offlineCheck');
   } else if(!boothState.prabhariTaken){
     const left = boothState.supportLimit - boothState.supportCount;
-    showResult('open', rt('available', vars) + (left < boothState.supportLimit ? ' ' + rt('supportLeft', {left}) : ''));
+    showResult('open', rt('available', vars) + (left < boothState.supportLimit ? ' ' + rt('supportLeft', {left}) : ''), lead);
     els.guideTitle.textContent = t('formTitle');
     els.guidePrompt.textContent = rt('guideOpen');
   } else if(boothState.supportCount >= boothState.supportLimit){
-    showResult('full', rt('takenFull', Object.assign({count: boothState.supportCount}, vars)));
+    showResult('full', rt('takenFull', Object.assign({count: boothState.supportCount}, vars)), lead);
     els.guidePrompt.textContent = rt('guideTaken');
     els.form.hidden = true;
     setRoleAvailability();
     return;
   } else {
-    showResult('taken', rt('takenBy', Object.assign({name: boothState.heldBy || '—'}, vars)));
+    showResult('taken', rt('takenBy', Object.assign({name: boothState.heldBy || '—'}, vars)), lead);
     els.guideTitle.textContent = t('formTitle');
     els.guidePrompt.textContent = rt('guideTaken');
   }
