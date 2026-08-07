@@ -239,7 +239,9 @@
 
 .puja-body .quote-band{background:linear-gradient(135deg,var(--puja-deep),var(--puja-red))}
 .puja-body .footer{background:#3b1009}
-.puja-body .button.primary{background:var(--puja-red);border-color:var(--puja-red)}
+.puja-body .button.primary{background:var(--puja-red);border-color:var(--puja-red);color:#fff}
+.puja-body .stats-strip strong{color:var(--puja-deep)}
+.puja-body .stats-strip span{color:var(--puja-muted)}
 .puja-body .legacy-panel .button.outline{margin-top:16px;display:inline-block}
 
 .claim-layout,.sponsor-layout,.enroll-form,.tier-card{scroll-margin-top:112px}
