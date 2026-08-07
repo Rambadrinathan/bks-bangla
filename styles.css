@@ -434,7 +434,11 @@ body[data-lang="bn"] .lead{
 }
 @media (max-width:980px){
   .site-header{position:relative;align-items:flex-start;flex-wrap:wrap}
-  nav{order:3;width:100%;overflow:auto}
+  /* The mobile nav is a horizontal scroll strip. Without nowrap the links
+     shrink and wrap onto a second row instead of scrolling, which is what
+     happens as soon as the page has more than about five nav items. */
+  nav{order:3;width:100%;overflow:auto;-webkit-overflow-scrolling:touch}
+  nav a{flex:0 0 auto;white-space:nowrap}
   .hero,.split,.legacy,.leadership,.bengal,.ai-section,.story-head,.photo-feature-grid,.note-grid,.enroll-layout{grid-template-columns:1fr}
   .ai-copy,.agent-panel{position:static}
   .photo-feature-grid .wide img{min-height:360px}
