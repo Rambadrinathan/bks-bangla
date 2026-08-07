@@ -5,7 +5,7 @@ const APPLICATION_TABLE = 'bks_district_leadership_applications';
 const translations = {
   en: {
     brand:"Bharatiya Krishak Samaj", brandSub:"West Bengal",
-    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal",
+    navVision:"Vision", navLeadership:"Leadership", navAgenda:"Agenda", navBengal:"Bengal", navPuja:"Krishak Samaj Puja",
     heroEyebrow:"30 June 2026 · New Delhi",
     heroKicker:"Official Appointment · West Bengal State President",
     heroTitle:"Mahacharya Sourabh J. Sarkar appointed President of Bharatiya Krishak Samaj, West Bengal.",
@@ -81,7 +81,7 @@ const translations = {
   },
   hi: {
     brand:"भारतीय कृषक समाज", brandSub:"पश्चिम बंगाल",
-    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल",
+    navVision:"दृष्टि", navLeadership:"नेतृत्व", navAgenda:"कार्ययोजना", navBengal:"बंगाल", navPuja:"कृषक समाज पूजा",
     heroEyebrow:"30 जून 2026 · नई दिल्ली",
     heroKicker:"औपचारिक नियुक्ति · पश्चिम बंगाल राज्य अध्यक्ष",
     heroTitle:"महाचार्य सौरभ जे. सरकार भारतीय कृषक समाज, पश्चिम बंगाल के अध्यक्ष नियुक्त।",
@@ -157,7 +157,7 @@ const translations = {
   },
   bn: {
     brand:"ভারতীয় কৃষক সমাজ", brandSub:"পশ্চিমবঙ্গ",
-    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা",
+    navVision:"দৃষ্টি", navLeadership:"নেতৃত্ব", navAgenda:"কর্মসূচি", navBengal:"বাংলা", navPuja:"কৃষক সমাজ পূজা",
     heroEyebrow:"৩০ জুন ২০২৬ · নয়াদিল্লি",
     heroKicker:"আনুষ্ঠানিক নিয়োগ · পশ্চিমবঙ্গ রাজ্য সভাপতি",
     heroTitle:"মহাচার্য সৌরভ জে. সরকার ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গের সভাপতি নিযুক্ত।",

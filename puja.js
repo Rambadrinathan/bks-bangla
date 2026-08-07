@@ -1,0 +1,932 @@
+/* Krishak Samaj Puja — Bharatiya Krishak Samaj, West Bengal
+   Nominations, sponsorship enquiries, and the public-facing event site. */
+
+/* ==========================================================================
+   PUJA CONFIG — EVERY ASSUMED FACT LIVES HERE.
+   These values were assumed to get the site built and are almost certainly
+   not final. Correct them here and the whole site updates; nothing below
+   this block hard-codes a date, a place or an amount.
+
+     dates    — ASSUMED. Durga Puja 2026 tithi not confirmed.
+     venue    — ASSUMED. No pandal site confirmed.
+     ceremony — ASSUMED. Which evening the awards run.
+     contact  — DELIBERATELY EMPTY. No phone or email has been invented.
+                Fill these in and the "reach us directly" block appears by
+                itself. Until then the enquiry form is the only route, which
+                is safe: it goes to your database, not to a stranger's phone.
+     tiers    — ASSUMED amounts. Real pricing is a BKS decision.
+   ========================================================================== */
+
+const PUJA = {
+  assumptionsPending: true,
+
+  dates: {
+    display: {
+      en: '16–20 October 2026',
+      hi: '16–20 अक्टूबर 2026',
+      bn: '১৬–২০ অক্টোবর ২০২৬'
+    },
+    note: {
+      en: 'Dates to be confirmed against the puja tithi',
+      hi: 'तिथि के अनुसार तारीखें पुष्ट की जानी हैं',
+      bn: 'পুজোর তিথি অনুযায়ী তারিখ নিশ্চিত করা হবে'
+    }
+  },
+
+  venue: {
+    short: {
+      en: 'Kolkata, West Bengal',
+      hi: 'कोलकाता, पश्चिम बंगाल',
+      bn: 'কলকাতা, পশ্চিমবঙ্গ'
+    },
+    detail: {
+      en: 'Pandal address to be announced',
+      hi: 'पंडाल का पता शीघ्र घोषित किया जाएगा',
+      bn: 'প্যান্ডেলের ঠিকানা শীঘ্রই ঘোষণা করা হবে'
+    }
+  },
+
+  ceremony: {
+    en: 'Award ceremony on Ashtami evening',
+    hi: 'पुरस्कार समारोह अष्टमी की संध्या को',
+    bn: 'পুরস্কার অনুষ্ঠান অষ্টমীর সন্ধ্যায়'
+  },
+
+  // Leave blank until a real number and inbox exist for this.
+  contact: { phone: '', email: '' },
+
+  tiers: [
+    { id: 'title',     amount: 1000000, slots: 1 },
+    { id: 'category',  amount: 250000,  slots: 7 },
+    { id: 'pandal',    amount: 100000,  slots: null },
+    { id: 'community', amount: 25000,   slots: null }
+  ],
+
+  categories: [
+    'best_farmer_overall',
+    'fishery',
+    'animal_husbandry',
+    'urban_kitchen_gardening',
+    'modern_tech_farming',
+    'organic_natural',
+    'horticulture_floriculture'
+  ]
+};
+
+const SUPABASE_URL = 'https://lhnorkjfldywnrqqunqn.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxobm9ya2pmbGR5d25ycXF1bnFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE4MzgxMjcsImV4cCI6MjA4NzQxNDEyN30.y90MFaq7qJ4YxuF-6HsY0WUZ9zSDJYwfl6F5r-JJrxI';
+
+const translations = {
+  en: {
+    brand:"Krishak Samaj Puja", brandSub:"Bharatiya Krishak Samaj · West Bengal",
+    navTheme:"The theme", navAwards:"Awards", navNominate:"Nominate", navSponsor:"Sponsor", navVisit:"Visit",
+    heroKicker:"First of its kind in West Bengal",
+    heroTitle:"A Durga Puja for the annadata.",
+    heroLead:"Krishak Samaj Puja is the first Durga Puja in West Bengal built around sustainable agriculture — the soil, the seed, the water and the hands that feed Bengal. Presented by Bharatiya Krishak Samaj, West Bengal, it carries a state-wide farmer awards ceremony inside the pandal, honouring the cultivators whose work usually goes unseen.",
+    metaWhenLabel:"When", metaWhereLabel:"Where", metaWhoLabel:"Presented by",
+    metaWho:"Bharatiya Krishak Samaj, West Bengal",
+    heroCta1:"Become a sponsor", heroCta2:"Nominate a farmer",
+    countEyebrow:"Nominations open",
+    countNominationsLabel:"farmers nominated", countDistrictsLabel:"districts represented", countCategoriesLabel:"award categories",
+    countNote:"Any farmer in West Bengal may be nominated, by themselves or by anyone who knows their work. There is no fee to enter and no fee to win.",
+    diff1:"First agriculture-themed Durga Puja", diff1Sub:"Bengal has pandals on every theme but the one that feeds it",
+    diff2:"A farmer award, not a trophy", diff2Sub:"State-wide recognition across seven farming streams",
+    diff3:"Under a national farmers' body", diff3Sub:"Bharatiya Krishak Samaj, registered 2007, active nationally",
+    themeEyebrow:"The theme", themeTitle:"Sustainable agriculture, told as worship.",
+    themeP1:"Durga Puja in Bengal has been staged around cinema, architecture, politics, space travel and social causes. It has not been staged around the thing Bengal actually stands on — its farmland. Krishak Samaj Puja puts soil, seed, water and the farming family at the centre of the pandal.",
+    themeP2:"The mandap draws on the older idea already inside the festival: Devi Durga arrives with Nabapatrika, the nine plants; Kola Bou is a banana plant; the harvest is what the festival was timed to. This puja does not invent an agricultural theme so much as return the festival to it.",
+    themeP3:"Inside, the pandal carries the working argument of Bharatiya Krishak Samaj — natural and chemical-conscious farming, native seed, soil health, fair price, and farming as a livelihood a young person can choose without apology.",
+    bannerEyebrow:"Under whose banner", bannerTitle:"Bharatiya Krishak Samaj, West Bengal.",
+    bannerText:"This puja is not a standalone committee. It is organised by the West Bengal wing of Bharatiya Krishak Samaj, a national farmers' organisation, and it is one part of a wider programme of farmer organisation across the state.",
+    bannerLink:"See the BKS West Bengal platform",
+    leader1Eyebrow:"National President", leader1Title:"Dr. Krishan Bir Chaudhary",
+    leader1Text:"National President of Bharatiya Krishak Samaj, long associated with national farmer policy, MSP discussions and farmer advocacy.",
+    leader2Eyebrow:"State President, West Bengal", leader2Title:"Mahacharya Sourabh J. Sarkar",
+    leader2Text:"Appointed President of Bharatiya Krishak Samaj, West Bengal on 30 June 2026 in New Delhi. Agriculturist-educationist, urban farming pioneer, and founder of KarmYog for the 21st Century.",
+    awardsEyebrow:"Krishak Samaj Awards 2026",
+    awardsTitle:"Seven awards for the farmers Bengal does not photograph.",
+    awardsText:"The awards are decided from nominations sent by farmers, families and communities across West Bengal, together with farmers already documented by the creators who have spent years profiling innovative agriculture in this state. Winners are honoured on stage at the pandal during the puja.",
+    awardsFootnote:"Category list is being finalised with the Krishak Samaj Puja social media committee. Additional streams may be added as nominations reveal what is actually being done in the field.",
+    nominateEyebrow:"Nominations", nominateTitle:"Nominate a farmer. Or nominate yourself.",
+    nominateText:"If you know a farmer doing something worth seeing — a fish farmer who solved saline water, a woman running a dairy on four cows, a boy growing vegetables on a Kolkata roof — send their name. If that farmer is you, send your own. There is no entry fee.",
+    guideEyebrow:"What we are looking for", guideTitle:"Not the biggest farm. The most interesting one.",
+    guideText:"Scale is not the test. A farmer working two bighas with a genuinely better method matters more here than a large farm doing what everyone else does.",
+    guideCheck1:"Something changed — a method, a crop, a way of selling",
+    guideCheck2:"Other farmers nearby can copy it",
+    guideCheck3:"It holds up on soil, water and input cost",
+    guideCheck4:"There is something to see — photos, video, a page online",
+    fieldWhoFiling:"Who is filling this in",
+    typeSelf:"I am the farmer", typeSelfNote:"Nominating my own work",
+    typeOther:"I am nominating someone else", typeOtherNote:"A farmer I know, or one I have documented",
+    fieldCategory:"Award category",
+    subheadFarmer:"The farmer",
+    fieldFarmerName:"Farmer's full name", fieldFarmerPhone:"Farmer's mobile number", fieldFarmerDistrict:"District",
+    fieldFarmerBlock:"Block / Municipality", fieldFarmerVillage:"Village / Para", fieldFarmerGender:"Gender",
+    fieldYearsFarming:"Years farming", fieldLandHolding:"Land / scale",
+    optSelect:"Select", optFemale:"Female", optMale:"Male", optOther:"Other", optUndisclosed:"Prefer not to say",
+    optRooftop:"Rooftop / terrace / kitchen garden", optLandless:"Landless / farm worker", optSharecropper:"Bargadar / sharecropper",
+    optUnder1:"Under 1 acre", opt13:"1 to 3 acres", opt310:"3 to 10 acres", opt10p:"More than 10 acres",
+    subheadWork:"The work",
+    fieldWhatGrow:"What they grow or raise",
+    fieldInnovation:"What is different about how they farm? <em>This is the part the judges read most closely.</em>",
+    fieldImpact:"What has it changed — for their income, their soil, or other farmers nearby?",
+    subheadEvidence:"Where we can see it",
+    fieldSocial:"Facebook / YouTube / Instagram links",
+    fieldFeatured:"Has a channel or creator already made a video about this farmer? Which one?",
+    subheadNominator:"About you",
+    fieldNominatorName:"Your name", fieldNominatorPhone:"Your mobile number", fieldNominatorRel:"How do you know this farmer?",
+    nomConsent1:"Bharatiya Krishak Samaj may contact this farmer on the number given, to verify the nomination and to invite them.",
+    nomConsent2:"These details may be kept by BKS West Bengal for judging and for the Krishak Samaj Puja programme. Phone numbers are never shown publicly.",
+    submitNomination:"Send nomination", downloadNomination:"Download this nomination",
+    nominationStatusText:"Nominations are screened by the Krishak Samaj Puja committee. Shortlisted farmers are contacted by phone.",
+    sponsorEyebrow:"Sponsorship", sponsorTitle:"Reach the farming audience where it already gathers.",
+    sponsorText:"Durga Puja is the one week Bengal is entirely outdoors. Krishak Samaj Puja puts an agricultural audience — farmers, farming families, FPO members, agri-students, and the creators who reach hundreds of thousands of them — inside a single pandal, in front of an award programme designed to be reported. Sponsorship covers pandal-scale visibility and award category naming together.",
+    why1:"A defined audience", why1Text:"Not general festival footfall. Farming families, FPOs, agri-input buyers and rural youth, gathered deliberately.",
+    why2:"A press story attached", why2Text:"Bengal's first agriculture-themed Durga Puja, under a national farmers' body, with a state-wide farmer award. Built to be covered.",
+    why3:"Category naming", why3Text:"A sponsor's name sits on an award, on stage, in the citation and in every mention of that category.",
+    why4:"A year-round network", why4Text:"BKS West Bengal is organising down to booth level across the state. The puja is the visible end of a standing farmer network.",
+    tierFootnote:"Sponsorship amounts are indicative and are being finalised. Nothing is collected through this website — the committee will contact you to discuss scope, and any payment happens offline through the BKS finance process.",
+    sponsorContactEyebrow:"Talk to the committee", sponsorContactTitle:"Send an enquiry and we will call you.",
+    sponsorContactText:"Tell us roughly what you are interested in. Someone from the Krishak Samaj Puja committee will call to discuss what fits — including options not listed here.",
+    sponsorDirectLabel:"Or reach us directly",
+    sponsorCheck1:"Sponsor wall listing on this site once confirmed",
+    sponsorCheck2:"Named presence at the award ceremony",
+    sponsorCheck3:"No payment taken online, ever",
+    sponsorFormTitle:"Sponsorship enquiry",
+    fieldOrg:"Organisation name", fieldContactPerson:"Contact person", fieldDesignation:"Designation",
+    fieldSponsorPhone:"Mobile number", fieldSponsorEmail:"Email", fieldWebsite:"Website", fieldSector:"Sector",
+    secSeed:"Seed", secFert:"Fertiliser / crop nutrition", secTech:"Agri-tech / machinery", secIrrigation:"Irrigation / water",
+    secFishery:"Fishery / aquaculture", secDairy:"Dairy / livestock", secBank:"Bank / rural finance / insurance",
+    secFpo:"FPO / co-operative", secRetail:"Food / retail brand",
+    fieldTier:"Sponsorship level of interest", fieldCategoryInterest:"If you want to name an award category, which one?",
+    fieldBudget:"Indicative budget (optional)", fieldMessage:"Anything you want the committee to know",
+    sponsorConsent1:"The Krishak Samaj Puja committee may contact me on the details given about this sponsorship.",
+    sponsorConsent2:"If we go ahead, our organisation's name may be listed publicly as a sponsor on this website.",
+    submitSponsor:"Send enquiry", downloadSponsor:"Download this enquiry",
+    sponsorStatusText:"No payment is taken on this website. The committee will call you to discuss scope before anything is agreed.",
+    wallEyebrow:"Our sponsors",
+    visitEyebrow:"Visiting", visitTitle:"Come to the pandal.",
+    visitText:"Krishak Samaj Puja is open to everyone, free, for all days of the puja. The award ceremony is held on one evening inside the pandal, and the farmer exhibition runs throughout — native seed, natural inputs, and the farms behind each award category.",
+    prog1:"Farmer exhibition", prog1Text:"All days · native seed, natural inputs, and the work behind each award",
+    prog2:"Krishak Samaj Awards ceremony", prog2Text:"One evening · winners honoured on stage across all categories",
+    prog3:"Farmer-to-farmer sessions", prog3Text:"Short talks by the award finalists on what they actually changed",
+    pressEyebrow:"For press", pressTitle:"The facts, in one place.",
+    press1:"<strong>What:</strong> Krishak Samaj Puja — a Durga Puja themed on sustainable agriculture, believed to be the first of its kind in West Bengal.",
+    press2:"<strong>Who:</strong> Presented by Bharatiya Krishak Samaj, West Bengal — the state wing of a national farmers' organisation, registration no. S/60440/2007.",
+    press3:"<strong>Leadership:</strong> Mahacharya Sourabh J. Sarkar, appointed State President on 30 June 2026 in New Delhi by National President Dr. Krishan Bir Chaudhary.",
+    press4:"<strong>The awards:</strong> Krishak Samaj Awards across seven farming streams, open to nomination by any farmer or community member in West Bengal, with no entry fee.",
+    press5:"<strong>Why it matters:</strong> Bengal stages pandals on every theme except the agriculture the state rests on. This puja returns the festival to the harvest it was timed to.",
+    pressProfile:"State President profile (PDF)", pressProfileHi:"Hindi profile (PDF)", pressPlatform:"BKS West Bengal platform",
+    pujaQuote:"“Devi Durga has always arrived with the nine plants. The harvest was never separate from the worship — we only stopped saying it out loud.”",
+    footerBrand:"Krishak Samaj Puja · Bharatiya Krishak Samaj, West Bengal",
+    footerText:"A Durga Puja for the annadata. Sustainable agriculture, farmer recognition, and a festival returned to the harvest.",
+    categories:{
+      best_farmer_overall:{name:"Best Farmer — Overall", desc:"The single most outstanding farmer identified across West Bengal this year."},
+      fishery:{name:"Fishery", desc:"Excellence and innovation in fish farming and aquaculture, including saline and wetland systems."},
+      animal_husbandry:{name:"Animal Husbandry", desc:"Excellence in dairy, poultry, goatery or livestock rearing."},
+      urban_kitchen_gardening:{name:"Urban & Kitchen Gardening", desc:"Innovative rooftop, terrace, balcony and small-plot growing in towns and cities."},
+      modern_tech_farming:{name:"Modern & Tech-Enabled Farming", desc:"New techniques, mechanisation, protected cultivation or agri-tech put to real use."},
+      organic_natural:{name:"Organic & Natural Farming", desc:"Chemical-free and natural practice with soil health and native inputs at the centre."},
+      horticulture_floriculture:{name:"Horticulture & Floriculture", desc:"Fruit, vegetable, spice and flower cultivation done exceptionally well."}
+    },
+    tiers:{
+      title:{name:"Title Sponsor", note:"One only", benefits:["Puja presented in association with your name","Name and logo on the main pandal gate and stage","Named across all award citations and press material","Speaking slot at the award ceremony","Stall space through all puja days"]},
+      category:{name:"Award Category Sponsor", note:"One per award category", benefits:["One award named for your organisation","Your name in every mention of that category","Presenting the award on stage","Logo on pandal sponsor board","Stall space through all puja days"]},
+      pandal:{name:"Pandal Partner", note:"Limited", benefits:["Logo on the pandal sponsor board","Named in the puja programme","Mention from stage at the ceremony","Stall space on award day"]},
+      community:{name:"Community Supporter", note:"For FPOs, farmer groups and local businesses", benefits:["Name on the community supporter board","Named in the puja programme","Invitation to the award ceremony"]}
+    },
+    rt:{
+      slotsOne:"1 available", slotsN:"{n} available", slotsOpen:"Open",
+      tierUndecided:"Not sure yet — advise me",
+      categoryNone:"No preference",
+      submitting:"Sending…",
+      nomSuccess:"Nomination received. Thank you. If shortlisted, the committee will call the number you gave.",
+      nomDuplicate:"This farmer has already been nominated in this category. One nomination per farmer per category is enough — the committee has it.",
+      sponsorSuccess:"Enquiry received. Someone from the Krishak Samaj Puja committee will call you.",
+      sponsorDuplicate:"We already have an open enquiry from this number. The committee will be in touch — no need to send it again.",
+      errPhone:"Please enter a valid 10-digit Indian mobile number.",
+      errConsent:"Please accept the required consent before sending.",
+      errOffline:"We could not reach the database, so your form has been downloaded as a file. Please send it to the Krishak Samaj Puja committee.",
+      errGeneric:"Something was not accepted. Please check the form and try again."
+    }
+  },
+
+  hi: {
+    brand:"कृषक समाज पूजा", brandSub:"भारतीय कृषक समाज · पश्चिम बंगाल",
+    navTheme:"थीम", navAwards:"पुरस्कार", navNominate:"नामांकन", navSponsor:"प्रायोजन", navVisit:"पंडाल",
+    heroKicker:"पश्चिम बंगाल में अपनी तरह की पहली",
+    heroTitle:"अन्नदाता के लिए एक दुर्गा पूजा।",
+    heroLead:"कृषक समाज पूजा पश्चिम बंगाल की पहली दुर्गा पूजा है जो टिकाऊ कृषि पर केंद्रित है — मिट्टी, बीज, पानी और वे हाथ जो बंगाल का पेट भरते हैं। भारतीय कृषक समाज, पश्चिम बंगाल द्वारा प्रस्तुत, इसके पंडाल के भीतर राज्य स्तरीय किसान पुरस्कार समारोह होगा, जो उन किसानों को सम्मान देगा जिनका काम आमतौर पर अनदेखा रह जाता है।",
+    metaWhenLabel:"कब", metaWhereLabel:"कहाँ", metaWhoLabel:"प्रस्तुतकर्ता",
+    metaWho:"भारतीय कृषक समाज, पश्चिम बंगाल",
+    heroCta1:"प्रायोजक बनें", heroCta2:"किसान का नामांकन करें",
+    countEyebrow:"नामांकन खुले हैं",
+    countNominationsLabel:"किसान नामांकित", countDistrictsLabel:"जिले शामिल", countCategoriesLabel:"पुरस्कार श्रेणियाँ",
+    countNote:"पश्चिम बंगाल का कोई भी किसान नामांकित हो सकता है — स्वयं या किसी ऐसे व्यक्ति द्वारा जो उनका काम जानता हो। न प्रवेश शुल्क, न जीतने का शुल्क।",
+    diff1:"पहली कृषि-थीम वाली दुर्गा पूजा", diff1Sub:"बंगाल में हर विषय पर पंडाल हैं, सिवाय उसके जो उसे खिलाता है",
+    diff2:"ट्रॉफी नहीं, किसान सम्मान", diff2Sub:"सात कृषि धाराओं में राज्य स्तरीय पहचान",
+    diff3:"एक राष्ट्रीय किसान संगठन के तहत", diff3Sub:"भारतीय कृषक समाज, 2007 में पंजीकृत, राष्ट्रीय स्तर पर सक्रिय",
+    themeEyebrow:"थीम", themeTitle:"टिकाऊ कृषि, पूजा की भाषा में।",
+    themeP1:"बंगाल की दुर्गा पूजा सिनेमा, वास्तुकला, राजनीति, अंतरिक्ष और सामाजिक विषयों पर सजती रही है। पर उस पर नहीं जिस पर बंगाल वास्तव में टिका है — उसकी खेती। कृषक समाज पूजा मिट्टी, बीज, पानी और कृषक परिवार को पंडाल के केंद्र में रखती है।",
+    themeP2:"मंडप उसी पुराने विचार से निकलता है जो पर्व के भीतर पहले से है: देवी दुर्गा नवपत्रिका के साथ आती हैं; कोला बउ केले का पौधा है; यह पर्व फसल के समय पर ही रखा गया था। यह पूजा कृषि थीम गढ़ती नहीं, बल्कि पर्व को उसी की ओर लौटाती है।",
+    themeP3:"भीतर पंडाल भारतीय कृषक समाज का व्यावहारिक तर्क रखता है — प्राकृतिक और रसायन-सजग खेती, देशी बीज, मिट्टी का स्वास्थ्य, उचित मूल्य, और खेती एक ऐसी आजीविका के रूप में जिसे युवा बिना संकोच चुन सके।",
+    bannerEyebrow:"किसके बैनर तले", bannerTitle:"भारतीय कृषक समाज, पश्चिम बंगाल।",
+    bannerText:"यह पूजा कोई अलग समिति नहीं है। इसका आयोजन भारतीय कृषक समाज — एक राष्ट्रीय किसान संगठन — की पश्चिम बंगाल इकाई करती है, और यह पूरे राज्य में किसान संगठन के व्यापक कार्यक्रम का एक हिस्सा है।",
+    bannerLink:"BKS पश्चिम बंगाल मंच देखें",
+    leader1Eyebrow:"राष्ट्रीय अध्यक्ष", leader1Title:"डॉ. कृष्ण बीर चौधरी",
+    leader1Text:"भारतीय कृषक समाज के राष्ट्रीय अध्यक्ष, राष्ट्रीय किसान नीति, MSP चर्चाओं और किसान पैरवी से लंबे समय से जुड़े हुए।",
+    leader2Eyebrow:"प्रदेश अध्यक्ष, पश्चिम बंगाल", leader2Title:"महाचार्य सौरभ जे. सरकार",
+    leader2Text:"30 जून 2026 को नई दिल्ली में भारतीय कृषक समाज, पश्चिम बंगाल के अध्यक्ष नियुक्त। कृषिविद्-शिक्षाविद्, शहरी खेती के अग्रदूत, और KarmYog for the 21st Century के संस्थापक।",
+    awardsEyebrow:"कृषक समाज पुरस्कार 2026",
+    awardsTitle:"उन किसानों के लिए सात पुरस्कार जिनकी तस्वीर बंगाल नहीं खींचता।",
+    awardsText:"पुरस्कार पश्चिम बंगाल भर के किसानों, परिवारों और समुदायों से आए नामांकनों से तय होंगे, साथ ही उन किसानों से जिन्हें वर्षों से नवाचारी खेती का दस्तावेजीकरण कर रहे रचनाकारों ने पहले ही दर्ज किया है। विजेताओं को पूजा के दौरान पंडाल के मंच पर सम्मानित किया जाएगा।",
+    awardsFootnote:"श्रेणी सूची कृषक समाज पूजा सोशल मीडिया समिति के साथ अंतिम रूप ले रही है। नामांकनों से जो सामने आएगा, उसके अनुसार और धाराएँ जोड़ी जा सकती हैं।",
+    nominateEyebrow:"नामांकन", nominateTitle:"किसी किसान का नाम भेजिए। या अपना।",
+    nominateText:"यदि आप किसी ऐसे किसान को जानते हैं जिसका काम देखने लायक है — कोई मछली पालक जिसने खारे पानी का हल निकाला, कोई महिला जो चार गायों से डेयरी चला रही है, कोई लड़का जो कोलकाता की छत पर सब्जी उगा रहा है — उनका नाम भेजिए। यदि वह किसान आप स्वयं हैं, तो अपना नाम भेजिए। कोई प्रवेश शुल्क नहीं।",
+    guideEyebrow:"हम क्या खोज रहे हैं", guideTitle:"सबसे बड़ा खेत नहीं। सबसे दिलचस्प खेत।",
+    guideText:"पैमाना कसौटी नहीं है। दो बीघा पर सचमुच बेहतर तरीका अपनाने वाला किसान यहाँ उस बड़े खेत से अधिक मायने रखता है जो वही कर रहा है जो सब करते हैं।",
+    guideCheck1:"कुछ बदला — कोई तरीका, कोई फसल, बेचने का कोई ढंग",
+    guideCheck2:"आसपास के दूसरे किसान इसे अपना सकते हैं",
+    guideCheck3:"मिट्टी, पानी और लागत की कसौटी पर टिकता है",
+    guideCheck4:"देखने के लिए कुछ है — फोटो, वीडियो, ऑनलाइन पेज",
+    fieldWhoFiling:"यह फॉर्म कौन भर रहा है",
+    typeSelf:"मैं स्वयं किसान हूँ", typeSelfNote:"अपने काम का नामांकन",
+    typeOther:"मैं किसी और का नामांकन कर रहा/रही हूँ", typeOtherNote:"एक किसान जिन्हें मैं जानता/जानती हूँ",
+    fieldCategory:"पुरस्कार श्रेणी",
+    subheadFarmer:"किसान",
+    fieldFarmerName:"किसान का पूरा नाम", fieldFarmerPhone:"किसान का मोबाइल नंबर", fieldFarmerDistrict:"जिला",
+    fieldFarmerBlock:"ब्लॉक / नगरपालिका", fieldFarmerVillage:"गाँव / पाड़ा", fieldFarmerGender:"लिंग",
+    fieldYearsFarming:"कितने वर्षों से खेती", fieldLandHolding:"भूमि / पैमाना",
+    optSelect:"चुनिए", optFemale:"महिला", optMale:"पुरुष", optOther:"अन्य", optUndisclosed:"बताना नहीं चाहते",
+    optRooftop:"छत / बालकनी / किचन गार्डन", optLandless:"भूमिहीन / खेत मजदूर", optSharecropper:"बरगादार / बटाईदार",
+    optUnder1:"1 एकड़ से कम", opt13:"1 से 3 एकड़", opt310:"3 से 10 एकड़", opt10p:"10 एकड़ से अधिक",
+    subheadWork:"काम",
+    fieldWhatGrow:"वे क्या उगाते या पालते हैं",
+    fieldInnovation:"उनकी खेती में अलग क्या है? <em>निर्णायक इसी हिस्से को सबसे ध्यान से पढ़ते हैं।</em>",
+    fieldImpact:"इससे क्या बदला — उनकी आय, उनकी मिट्टी, या आसपास के दूसरे किसानों के लिए?",
+    subheadEvidence:"हम इसे कहाँ देख सकते हैं",
+    fieldSocial:"Facebook / YouTube / Instagram लिंक",
+    fieldFeatured:"क्या किसी चैनल या रचनाकार ने इन पर वीडियो बनाया है? कौन सा?",
+    subheadNominator:"आपके बारे में",
+    fieldNominatorName:"आपका नाम", fieldNominatorPhone:"आपका मोबाइल नंबर", fieldNominatorRel:"आप इस किसान को कैसे जानते हैं?",
+    nomConsent1:"भारतीय कृषक समाज नामांकन की पुष्टि और आमंत्रण के लिए इस किसान से दिए गए नंबर पर संपर्क कर सकता है।",
+    nomConsent2:"ये विवरण निर्णय प्रक्रिया और कृषक समाज पूजा कार्यक्रम के लिए BKS पश्चिम बंगाल रख सकता है। फोन नंबर कभी सार्वजनिक नहीं किए जाते।",
+    submitNomination:"नामांकन भेजें", downloadNomination:"यह नामांकन डाउनलोड करें",
+    nominationStatusText:"नामांकनों की जाँच कृषक समाज पूजा समिति करती है। चयनित किसानों से फोन पर संपर्क किया जाता है।",
+    sponsorEyebrow:"प्रायोजन", sponsorTitle:"किसान दर्शकों तक वहीं पहुँचिए जहाँ वे पहले से जुटते हैं।",
+    sponsorText:"दुर्गा पूजा वह एक सप्ताह है जब पूरा बंगाल बाहर होता है। कृषक समाज पूजा एक कृषि दर्शक वर्ग — किसान, कृषक परिवार, FPO सदस्य, कृषि छात्र, और वे रचनाकार जो लाखों तक पहुँचते हैं — एक ही पंडाल में लाती है, एक ऐसे पुरस्कार कार्यक्रम के सामने जो कवर होने के लिए बना है। प्रायोजन में पंडाल स्तर की दृश्यता और पुरस्कार श्रेणी का नामकरण साथ आते हैं।",
+    why1:"एक निश्चित दर्शक वर्ग", why1Text:"सामान्य उत्सव भीड़ नहीं। कृषक परिवार, FPO, कृषि-आदान खरीदार और ग्रामीण युवा, सोच-समझकर एकत्र।",
+    why2:"साथ में एक प्रेस कहानी", why2Text:"बंगाल की पहली कृषि-थीम दुर्गा पूजा, एक राष्ट्रीय किसान संगठन के तहत, राज्य स्तरीय किसान पुरस्कार के साथ।",
+    why3:"श्रेणी नामकरण", why3Text:"प्रायोजक का नाम पुरस्कार पर, मंच पर, प्रशस्ति में और उस श्रेणी के हर उल्लेख में रहता है।",
+    why4:"वर्ष भर चलने वाला नेटवर्क", why4Text:"BKS पश्चिम बंगाल पूरे राज्य में बूथ स्तर तक संगठित हो रहा है। पूजा एक स्थायी किसान नेटवर्क का दृश्य छोर है।",
+    tierFootnote:"प्रायोजन राशि संकेतात्मक है और अंतिम रूप ले रही है। इस वेबसाइट से कुछ भी एकत्र नहीं किया जाता — समिति दायरे पर चर्चा के लिए आपसे संपर्क करेगी, और भुगतान BKS की वित्तीय प्रक्रिया से ऑफलाइन होता है।",
+    sponsorContactEyebrow:"समिति से बात करें", sponsorContactTitle:"पूछताछ भेजिए, हम आपको फोन करेंगे।",
+    sponsorContactText:"बस बता दीजिए कि आपकी रुचि किसमें है। कृषक समाज पूजा समिति से कोई आपसे बात करेगा — उन विकल्पों पर भी जो यहाँ सूचीबद्ध नहीं हैं।",
+    sponsorDirectLabel:"या सीधे संपर्क करें",
+    sponsorCheck1:"पुष्टि होने पर इस साइट पर प्रायोजक सूची में नाम",
+    sponsorCheck2:"पुरस्कार समारोह में नामित उपस्थिति",
+    sponsorCheck3:"ऑनलाइन कोई भुगतान नहीं, कभी नहीं",
+    sponsorFormTitle:"प्रायोजन पूछताछ",
+    fieldOrg:"संस्था का नाम", fieldContactPerson:"संपर्क व्यक्ति", fieldDesignation:"पद",
+    fieldSponsorPhone:"मोबाइल नंबर", fieldSponsorEmail:"ईमेल", fieldWebsite:"वेबसाइट", fieldSector:"क्षेत्र",
+    secSeed:"बीज", secFert:"उर्वरक / फसल पोषण", secTech:"कृषि-तकनीक / मशीनरी", secIrrigation:"सिंचाई / जल",
+    secFishery:"मत्स्य पालन", secDairy:"डेयरी / पशुधन", secBank:"बैंक / ग्रामीण वित्त / बीमा",
+    secFpo:"FPO / सहकारी", secRetail:"खाद्य / रिटेल ब्रांड",
+    fieldTier:"रुचि का प्रायोजन स्तर", fieldCategoryInterest:"यदि आप किसी पुरस्कार श्रेणी का नामकरण चाहते हैं, तो कौन सी?",
+    fieldBudget:"संकेतात्मक बजट (वैकल्पिक)", fieldMessage:"समिति को कुछ बताना चाहें",
+    sponsorConsent1:"कृषक समाज पूजा समिति इस प्रायोजन के बारे में दिए गए विवरण पर मुझसे संपर्क कर सकती है।",
+    sponsorConsent2:"यदि बात आगे बढ़ती है, तो हमारी संस्था का नाम इस वेबसाइट पर प्रायोजक के रूप में सार्वजनिक रूप से दिखाया जा सकता है।",
+    submitSponsor:"पूछताछ भेजें", downloadSponsor:"यह पूछताछ डाउनलोड करें",
+    sponsorStatusText:"इस वेबसाइट पर कोई भुगतान नहीं लिया जाता। कुछ भी तय होने से पहले समिति आपसे बात करेगी।",
+    wallEyebrow:"हमारे प्रायोजक",
+    visitEyebrow:"दर्शन", visitTitle:"पंडाल में पधारिए।",
+    visitText:"कृषक समाज पूजा सभी के लिए खुली है, निःशुल्क, पूजा के सभी दिन। पुरस्कार समारोह एक संध्या को पंडाल के भीतर होता है, और किसान प्रदर्शनी पूरे समय चलती है — देशी बीज, प्राकृतिक आदान, और हर पुरस्कार श्रेणी के पीछे के खेत।",
+    prog1:"किसान प्रदर्शनी", prog1Text:"सभी दिन · देशी बीज, प्राकृतिक आदान और हर पुरस्कार के पीछे का काम",
+    prog2:"कृषक समाज पुरस्कार समारोह", prog2Text:"एक संध्या · सभी श्रेणियों के विजेता मंच पर सम्मानित",
+    prog3:"किसान से किसान सत्र", prog3Text:"पुरस्कार फाइनलिस्ट बताएँगे कि उन्होंने वास्तव में क्या बदला",
+    pressEyebrow:"प्रेस हेतु", pressTitle:"तथ्य, एक ही जगह।",
+    press1:"<strong>क्या:</strong> कृषक समाज पूजा — टिकाऊ कृषि पर आधारित दुर्गा पूजा, जो पश्चिम बंगाल में अपनी तरह की पहली मानी जा रही है।",
+    press2:"<strong>कौन:</strong> भारतीय कृषक समाज, पश्चिम बंगाल द्वारा प्रस्तुत — एक राष्ट्रीय किसान संगठन की प्रदेश इकाई, पंजीकरण सं. S/60440/2007।",
+    press3:"<strong>नेतृत्व:</strong> महाचार्य सौरभ जे. सरकार, 30 जून 2026 को नई दिल्ली में राष्ट्रीय अध्यक्ष डॉ. कृष्ण बीर चौधरी द्वारा प्रदेश अध्यक्ष नियुक्त।",
+    press4:"<strong>पुरस्कार:</strong> सात कृषि धाराओं में कृषक समाज पुरस्कार, पश्चिम बंगाल के किसी भी किसान या समुदाय सदस्य द्वारा नामांकन हेतु खुले, बिना किसी प्रवेश शुल्क के।",
+    press5:"<strong>क्यों मायने रखता है:</strong> बंगाल हर विषय पर पंडाल सजाता है, सिवाय उस कृषि के जिस पर राज्य टिका है। यह पूजा पर्व को उसी फसल की ओर लौटाती है जिसके समय पर वह रखा गया था।",
+    pressProfile:"प्रदेश अध्यक्ष प्रोफाइल (PDF)", pressProfileHi:"हिंदी प्रोफाइल (PDF)", pressPlatform:"BKS पश्चिम बंगाल मंच",
+    pujaQuote:"“देवी दुर्गा सदा नवपत्रिका के साथ आई हैं। फसल कभी पूजा से अलग नहीं थी — हमने बस उसे कहना बंद कर दिया।”",
+    footerBrand:"कृषक समाज पूजा · भारतीय कृषक समाज, पश्चिम बंगाल",
+    footerText:"अन्नदाता के लिए एक दुर्गा पूजा। टिकाऊ कृषि, किसान सम्मान, और पर्व की फसल की ओर वापसी।",
+    categories:{
+      best_farmer_overall:{name:"सर्वश्रेष्ठ किसान — समग्र", desc:"इस वर्ष पूरे पश्चिम बंगाल में पहचाना गया सबसे उत्कृष्ट किसान।"},
+      fishery:{name:"मत्स्य पालन", desc:"मछली पालन और जलकृषि में उत्कृष्टता और नवाचार, खारे तथा आर्द्रभूमि तंत्रों सहित।"},
+      animal_husbandry:{name:"पशुपालन", desc:"डेयरी, मुर्गीपालन, बकरी पालन या पशुधन में उत्कृष्टता।"},
+      urban_kitchen_gardening:{name:"शहरी एवं किचन गार्डनिंग", desc:"शहरों और कस्बों में छत, बालकनी और छोटे भूखंड पर नवाचारी खेती।"},
+      modern_tech_farming:{name:"आधुनिक एवं तकनीक-आधारित खेती", desc:"नई तकनीक, मशीनीकरण, संरक्षित खेती या कृषि-तकनीक का वास्तविक उपयोग।"},
+      organic_natural:{name:"जैविक एवं प्राकृतिक खेती", desc:"रसायन-मुक्त और प्राकृतिक पद्धति, जिसमें मिट्टी का स्वास्थ्य और देशी आदान केंद्र में हों।"},
+      horticulture_floriculture:{name:"बागवानी एवं पुष्पकृषि", desc:"फल, सब्जी, मसाला और फूल की खेती, असाधारण रूप से की गई।"}
+    },
+    tiers:{
+      title:{name:"शीर्षक प्रायोजक", note:"केवल एक", benefits:["पूजा आपके नाम के साथ प्रस्तुत","मुख्य द्वार और मंच पर नाम व लोगो","सभी प्रशस्तियों और प्रेस सामग्री में नाम","पुरस्कार समारोह में संबोधन का अवसर","सभी पूजा दिनों में स्टॉल"]},
+      category:{name:"पुरस्कार श्रेणी प्रायोजक", note:"प्रति श्रेणी एक", benefits:["एक पुरस्कार आपकी संस्था के नाम पर","उस श्रेणी के हर उल्लेख में आपका नाम","मंच पर पुरस्कार प्रदान करने का अवसर","पंडाल प्रायोजक बोर्ड पर लोगो","सभी पूजा दिनों में स्टॉल"]},
+      pandal:{name:"पंडाल साझेदार", note:"सीमित", benefits:["पंडाल प्रायोजक बोर्ड पर लोगो","पूजा कार्यक्रम में नाम","समारोह में मंच से उल्लेख","पुरस्कार दिवस पर स्टॉल"]},
+      community:{name:"सामुदायिक सहयोगी", note:"FPO, किसान समूहों और स्थानीय व्यवसायों के लिए", benefits:["सामुदायिक सहयोगी बोर्ड पर नाम","पूजा कार्यक्रम में नाम","पुरस्कार समारोह में आमंत्रण"]}
+    },
+    rt:{
+      slotsOne:"1 उपलब्ध", slotsN:"{n} उपलब्ध", slotsOpen:"खुला",
+      tierUndecided:"अभी तय नहीं — सुझाव दीजिए",
+      categoryNone:"कोई विशेष पसंद नहीं",
+      submitting:"भेजा जा रहा है…",
+      nomSuccess:"नामांकन प्राप्त हुआ। धन्यवाद। चयन होने पर समिति दिए गए नंबर पर फोन करेगी।",
+      nomDuplicate:"इस किसान का इस श्रेणी में पहले ही नामांकन हो चुका है। प्रति श्रेणी एक नामांकन पर्याप्त है — समिति के पास यह मौजूद है।",
+      sponsorSuccess:"पूछताछ प्राप्त हुई। कृषक समाज पूजा समिति से कोई आपको फोन करेगा।",
+      sponsorDuplicate:"इस नंबर से एक पूछताछ पहले से खुली है। समिति संपर्क करेगी — दोबारा भेजने की आवश्यकता नहीं।",
+      errPhone:"कृपया 10 अंकों का वैध भारतीय मोबाइल नंबर भरिए।",
+      errConsent:"भेजने से पहले कृपया आवश्यक सहमति स्वीकार कीजिए।",
+      errOffline:"डेटाबेस तक नहीं पहुँच सके, इसलिए आपका फॉर्म फाइल के रूप में डाउनलोड हो गया है। कृपया इसे कृषक समाज पूजा समिति को भेजिए।",
+      errGeneric:"कुछ स्वीकार नहीं हुआ। कृपया फॉर्म जाँचकर पुनः प्रयास कीजिए।"
+    }
+  },
+
+  bn: {
+    brand:"কৃষক সমাজ পূজা", brandSub:"ভারতীয় কৃষক সমাজ · পশ্চিমবঙ্গ",
+    navTheme:"থিম", navAwards:"পুরস্কার", navNominate:"মনোনয়ন", navSponsor:"পৃষ্ঠপোষকতা", navVisit:"প্যান্ডেল",
+    heroKicker:"পশ্চিমবঙ্গে এই ধরনের প্রথম",
+    heroTitle:"অন্নদাতার জন্য একটি দুর্গাপূজা।",
+    heroLead:"কৃষক সমাজ পূজা পশ্চিমবঙ্গের প্রথম দুর্গাপূজা যার কেন্দ্রে টেকসই কৃষি — মাটি, বীজ, জল এবং সেই হাত যা বাংলার অন্ন জোগায়। ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ নিবেদিত এই পূজার প্যান্ডেলের ভিতরেই হবে রাজ্যব্যাপী কৃষক পুরস্কার অনুষ্ঠান, যেখানে সম্মান পাবেন সেই চাষিরা যাঁদের কাজ সাধারণত চোখেই পড়ে না।",
+    metaWhenLabel:"কবে", metaWhereLabel:"কোথায়", metaWhoLabel:"নিবেদনে",
+    metaWho:"ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ",
+    heroCta1:"পৃষ্ঠপোষক হোন", heroCta2:"একজন কৃষককে মনোনীত করুন",
+    countEyebrow:"মনোনয়ন চলছে",
+    countNominationsLabel:"কৃষক মনোনীত", countDistrictsLabel:"জেলা যুক্ত", countCategoriesLabel:"পুরস্কার বিভাগ",
+    countNote:"পশ্চিমবঙ্গের যে কোনও কৃষককে মনোনীত করা যায় — নিজে, অথবা যিনি তাঁর কাজ জানেন তাঁর মাধ্যমে। প্রবেশমূল্য নেই, জেতার জন্যও কোনও খরচ নেই।",
+    diff1:"প্রথম কৃষি-থিমের দুর্গাপূজা", diff1Sub:"বাংলায় সব বিষয়ে প্যান্ডেল হয়, শুধু যেটি তাকে খাওয়ায় সেটি বাদে",
+    diff2:"ট্রফি নয়, কৃষকের সম্মান", diff2Sub:"সাতটি কৃষিধারায় রাজ্যব্যাপী স্বীকৃতি",
+    diff3:"একটি জাতীয় কৃষক সংগঠনের অধীনে", diff3Sub:"ভারতীয় কৃষক সমাজ, ২০০৭-এ নিবন্ধিত, সারা দেশে সক্রিয়",
+    themeEyebrow:"থিম", themeTitle:"টেকসই কৃষি, পূজার ভাষায়।",
+    themeP1:"বাংলার দুর্গাপূজা সেজেছে সিনেমা, স্থাপত্য, রাজনীতি, মহাকাশ আর সমাজচেতনার থিমে। সাজেনি শুধু সেইটিতে যার উপর বাংলা সত্যিই দাঁড়িয়ে — তার চাষজমি। কৃষক সমাজ পূজা মাটি, বীজ, জল আর কৃষক পরিবারকে প্যান্ডেলের কেন্দ্রে রাখে।",
+    themeP2:"মণ্ডপ সেই পুরনো ভাবনা থেকেই উঠে আসে যা উৎসবের ভিতরে আগে থেকেই আছে: দেবী দুর্গা আসেন নবপত্রিকা নিয়ে; কলা বউ কলাগাছ; উৎসবের সময়টাই বাঁধা ছিল ফসলের সঙ্গে। এই পূজা কৃষি-থিম বানায় না, বরং উৎসবকে তার নিজের জায়গায় ফিরিয়ে আনে।",
+    themeP3:"ভিতরে প্যান্ডেল বহন করে ভারতীয় কৃষক সমাজের কাজের যুক্তি — প্রাকৃতিক ও রাসায়নিক-সচেতন চাষ, দেশি বীজ, মাটির স্বাস্থ্য, ন্যায্য দাম, এবং চাষ এমন এক জীবিকা হিসেবে যা তরুণ প্রজন্ম কোনও সংকোচ ছাড়াই বেছে নিতে পারে।",
+    bannerEyebrow:"কার ব্যানারে", bannerTitle:"ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ।",
+    bannerText:"এই পূজা কোনও আলাদা কমিটির নয়। এটির আয়োজক ভারতীয় কৃষক সমাজ — একটি জাতীয় কৃষক সংগঠন — এর পশ্চিমবঙ্গ শাখা, এবং এটি রাজ্যজুড়ে কৃষক সংগঠনের বৃহত্তর কর্মসূচিরই একটি অংশ।",
+    bannerLink:"BKS পশ্চিমবঙ্গ মঞ্চ দেখুন",
+    leader1Eyebrow:"সর্বভারতীয় সভাপতি", leader1Title:"ড. কৃষণ বীর চৌধুরী",
+    leader1Text:"ভারতীয় কৃষক সমাজের সর্বভারতীয় সভাপতি, দীর্ঘদিন ধরে জাতীয় কৃষিনীতি, MSP আলোচনা ও কৃষকের পক্ষে সওয়ালের সঙ্গে যুক্ত।",
+    leader2Eyebrow:"রাজ্য সভাপতি, পশ্চিমবঙ্গ", leader2Title:"মহাচার্য সৌরভ জে. সরকার",
+    leader2Text:"৩০ জুন ২০২৬ নয়াদিল্লিতে ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গের সভাপতি নিযুক্ত। কৃষিবিদ-শিক্ষাবিদ, নগর কৃষির পথিকৃৎ, এবং KarmYog for the 21st Century-এর প্রতিষ্ঠাতা।",
+    awardsEyebrow:"কৃষক সমাজ পুরস্কার ২০২৬",
+    awardsTitle:"সেই কৃষকদের জন্য সাতটি পুরস্কার, বাংলা যাঁদের ছবি তোলে না।",
+    awardsText:"পুরস্কার ঠিক হবে পশ্চিমবঙ্গের কৃষক, পরিবার ও সম্প্রদায়ের পাঠানো মনোনয়ন থেকে, সেই সঙ্গে সেই কৃষকদের থেকে যাঁদের কথা বছরের পর বছর ধরে নথিবদ্ধ করেছেন এই রাজ্যের উদ্ভাবনী কৃষির নির্মাতারা। বিজয়ীদের পূজার সময় প্যান্ডেলের মঞ্চে সম্মান জানানো হবে।",
+    awardsFootnote:"বিভাগের তালিকা কৃষক সমাজ পূজা সোশ্যাল মিডিয়া কমিটির সঙ্গে চূড়ান্ত হচ্ছে। মনোনয়নে মাঠের বাস্তব কাজ যা উঠে আসবে, সেই অনুযায়ী আরও ধারা যোগ হতে পারে।",
+    nominateEyebrow:"মনোনয়ন", nominateTitle:"একজন কৃষককে মনোনীত করুন। বা নিজেকেই।",
+    nominateText:"আপনি যদি এমন কোনও কৃষককে চেনেন যাঁর কাজ দেখার মতো — নোনা জলের সমাধান করা মাছচাষি, চারটি গরু নিয়ে ডেয়ারি চালানো কোনও মহিলা, কলকাতার ছাদে সবজি ফলানো কোনও ছেলে — তাঁর নাম পাঠান। সেই কৃষক যদি আপনি নিজেই হন, নিজের নামই পাঠান। কোনও প্রবেশমূল্য নেই।",
+    guideEyebrow:"আমরা কী খুঁজছি", guideTitle:"সবচেয়ে বড় খামার নয়। সবচেয়ে আকর্ষণীয়টি।",
+    guideText:"আয়তন এখানে মাপকাঠি নয়। দুই বিঘায় সত্যিকারের ভালো পদ্ধতিতে চাষ করা কৃষক এখানে সেই বড় খামারের চেয়ে বেশি গুরুত্বপূর্ণ যেটি সবার মতোই চলছে।",
+    guideCheck1:"কিছু একটা বদলেছে — পদ্ধতি, ফসল, বা বিক্রির ধরন",
+    guideCheck2:"আশপাশের অন্য কৃষকেরা তা অনুসরণ করতে পারেন",
+    guideCheck3:"মাটি, জল ও খরচের বিচারে টেকে",
+    guideCheck4:"দেখার মতো কিছু আছে — ছবি, ভিডিও, অনলাইন পাতা",
+    fieldWhoFiling:"ফর্মটি কে পূরণ করছেন",
+    typeSelf:"আমি নিজেই কৃষক", typeSelfNote:"নিজের কাজের মনোনয়ন",
+    typeOther:"আমি অন্য কাউকে মনোনীত করছি", typeOtherNote:"আমার চেনা একজন কৃষক",
+    fieldCategory:"পুরস্কার বিভাগ",
+    subheadFarmer:"কৃষক",
+    fieldFarmerName:"কৃষকের পুরো নাম", fieldFarmerPhone:"কৃষকের মোবাইল নম্বর", fieldFarmerDistrict:"জেলা",
+    fieldFarmerBlock:"ব্লক / পুরসভা", fieldFarmerVillage:"গ্রাম / পাড়া", fieldFarmerGender:"লিঙ্গ",
+    fieldYearsFarming:"কত বছর ধরে চাষ", fieldLandHolding:"জমি / পরিসর",
+    optSelect:"বাছুন", optFemale:"মহিলা", optMale:"পুরুষ", optOther:"অন্য", optUndisclosed:"বলতে চাই না",
+    optRooftop:"ছাদ / বারান্দা / কিচেন গার্ডেন", optLandless:"ভূমিহীন / খেতমজুর", optSharecropper:"বর্গাদার / ভাগচাষি",
+    optUnder1:"১ একরের কম", opt13:"১ থেকে ৩ একর", opt310:"৩ থেকে ১০ একর", opt10p:"১০ একরের বেশি",
+    subheadWork:"কাজ",
+    fieldWhatGrow:"তিনি কী চাষ করেন বা পালন করেন",
+    fieldInnovation:"তাঁর চাষে আলাদা কী? <em>বিচারকেরা এই অংশটিই সবচেয়ে মন দিয়ে পড়েন।</em>",
+    fieldImpact:"এতে কী বদলেছে — তাঁর আয়, তাঁর মাটি, নাকি আশপাশের অন্য কৃষকদের ক্ষেত্রে?",
+    subheadEvidence:"আমরা কোথায় দেখতে পাব",
+    fieldSocial:"Facebook / YouTube / Instagram লিঙ্ক",
+    fieldFeatured:"কোনও চ্যানেল বা নির্মাতা কি এঁকে নিয়ে ভিডিও করেছেন? কোনটি?",
+    subheadNominator:"আপনার সম্পর্কে",
+    fieldNominatorName:"আপনার নাম", fieldNominatorPhone:"আপনার মোবাইল নম্বর", fieldNominatorRel:"এই কৃষককে আপনি কীভাবে চেনেন?",
+    nomConsent1:"ভারতীয় কৃষক সমাজ মনোনয়ন যাচাই ও আমন্ত্রণের জন্য এই কৃষকের সঙ্গে দেওয়া নম্বরে যোগাযোগ করতে পারে।",
+    nomConsent2:"বিচার ও কৃষক সমাজ পূজা কর্মসূচির জন্য এই তথ্য BKS পশ্চিমবঙ্গ রাখতে পারে। ফোন নম্বর কখনও প্রকাশ্যে দেখানো হয় না।",
+    submitNomination:"মনোনয়ন পাঠান", downloadNomination:"এই মনোনয়ন ডাউনলোড করুন",
+    nominationStatusText:"মনোনয়ন যাচাই করে কৃষক সমাজ পূজা কমিটি। সংক্ষিপ্ত তালিকাভুক্ত কৃষকদের ফোনে জানানো হয়।",
+    sponsorEyebrow:"পৃষ্ঠপোষকতা", sponsorTitle:"কৃষক দর্শকের কাছে পৌঁছান সেখানেই, যেখানে তাঁরা এমনিতেই জড়ো হন।",
+    sponsorText:"দুর্গাপূজা সেই এক সপ্তাহ যখন গোটা বাংলা বাইরে। কৃষক সমাজ পূজা এক কৃষি-দর্শককে — কৃষক, কৃষক পরিবার, FPO সদস্য, কৃষি-ছাত্র এবং লক্ষ লক্ষ মানুষের কাছে পৌঁছনো নির্মাতাদের — একটি প্যান্ডেলে নিয়ে আসে, এমন এক পুরস্কার কর্মসূচির সামনে যা সংবাদে আসার জন্যই তৈরি। পৃষ্ঠপোষকতায় প্যান্ডেল-স্তরের দৃশ্যমানতা ও পুরস্কার বিভাগের নামকরণ একসঙ্গে আসে।",
+    why1:"একটি নির্দিষ্ট দর্শক", why1Text:"সাধারণ উৎসবের ভিড় নয়। কৃষক পরিবার, FPO, কৃষি-উপকরণ ক্রেতা ও গ্রামীণ যুবক, ইচ্ছাকৃতভাবে একত্রিত।",
+    why2:"সঙ্গে একটি সংবাদ-কাহিনি", why2Text:"বাংলার প্রথম কৃষি-থিমের দুর্গাপূজা, একটি জাতীয় কৃষক সংগঠনের অধীনে, রাজ্যব্যাপী কৃষক পুরস্কার সহ।",
+    why3:"বিভাগের নামকরণ", why3Text:"পৃষ্ঠপোষকের নাম থাকে পুরস্কারে, মঞ্চে, প্রশস্তিপত্রে এবং সেই বিভাগের প্রতিটি উল্লেখে।",
+    why4:"সারা বছরের নেটওয়ার্ক", why4Text:"BKS পশ্চিমবঙ্গ রাজ্যজুড়ে বুথ স্তর পর্যন্ত সংগঠিত হচ্ছে। পূজা হল একটি স্থায়ী কৃষক নেটওয়ার্কের দৃশ্যমান প্রান্ত।",
+    tierFootnote:"পৃষ্ঠপোষকতার অঙ্ক ইঙ্গিতমূলক এবং চূড়ান্ত হচ্ছে। এই ওয়েবসাইটে কিছুই সংগ্রহ করা হয় না — কমিটি পরিসর নিয়ে আলোচনা করতে আপনার সঙ্গে যোগাযোগ করবে, এবং যে কোনও অর্থপ্রদান BKS-এর আর্থিক প্রক্রিয়ায় অফলাইনে হয়।",
+    sponsorContactEyebrow:"কমিটির সঙ্গে কথা বলুন", sponsorContactTitle:"জানান, আমরা ফোন করব।",
+    sponsorContactText:"শুধু বলুন কীসে আপনার আগ্রহ। কৃষক সমাজ পূজা কমিটির কেউ ফোন করে আলোচনা করবেন — এখানে তালিকাভুক্ত নয় এমন বিকল্প নিয়েও।",
+    sponsorDirectLabel:"অথবা সরাসরি যোগাযোগ করুন",
+    sponsorCheck1:"নিশ্চিত হলে এই সাইটের পৃষ্ঠপোষক তালিকায় নাম",
+    sponsorCheck2:"পুরস্কার অনুষ্ঠানে নামাঙ্কিত উপস্থিতি",
+    sponsorCheck3:"অনলাইনে কোনও অর্থ নেওয়া হয় না, কখনও নয়",
+    sponsorFormTitle:"পৃষ্ঠপোষকতা সংক্রান্ত জিজ্ঞাসা",
+    fieldOrg:"প্রতিষ্ঠানের নাম", fieldContactPerson:"যোগাযোগের ব্যক্তি", fieldDesignation:"পদ",
+    fieldSponsorPhone:"মোবাইল নম্বর", fieldSponsorEmail:"ইমেল", fieldWebsite:"ওয়েবসাইট", fieldSector:"ক্ষেত্র",
+    secSeed:"বীজ", secFert:"সার / ফসল পুষ্টি", secTech:"কৃষি-প্রযুক্তি / যন্ত্র", secIrrigation:"সেচ / জল",
+    secFishery:"মৎস্য / জলজ চাষ", secDairy:"দুগ্ধ / পশুপালন", secBank:"ব্যাঙ্ক / গ্রামীণ অর্থ / বিমা",
+    secFpo:"FPO / সমবায়", secRetail:"খাদ্য / খুচরা ব্র্যান্ড",
+    fieldTier:"আগ্রহের পৃষ্ঠপোষকতা স্তর", fieldCategoryInterest:"কোনও পুরস্কার বিভাগের নামকরণ চাইলে, কোনটি?",
+    fieldBudget:"ইঙ্গিতমূলক বাজেট (ঐচ্ছিক)", fieldMessage:"কমিটিকে কিছু জানাতে চাইলে",
+    sponsorConsent1:"কৃষক সমাজ পূজা কমিটি এই পৃষ্ঠপোষকতা নিয়ে দেওয়া তথ্যে আমার সঙ্গে যোগাযোগ করতে পারে।",
+    sponsorConsent2:"এগোলে আমাদের প্রতিষ্ঠানের নাম এই ওয়েবসাইটে পৃষ্ঠপোষক হিসেবে প্রকাশ্যে দেখানো যেতে পারে।",
+    submitSponsor:"জিজ্ঞাসা পাঠান", downloadSponsor:"এই জিজ্ঞাসা ডাউনলোড করুন",
+    sponsorStatusText:"এই ওয়েবসাইটে কোনও অর্থ নেওয়া হয় না। কিছু চূড়ান্ত হওয়ার আগে কমিটি আপনার সঙ্গে কথা বলবে।",
+    wallEyebrow:"আমাদের পৃষ্ঠপোষক",
+    visitEyebrow:"দর্শন", visitTitle:"প্যান্ডেলে আসুন।",
+    visitText:"কৃষক সমাজ পূজা সকলের জন্য খোলা, বিনামূল্যে, পূজার সব দিন। পুরস্কার অনুষ্ঠান হয় এক সন্ধ্যায় প্যান্ডেলের ভিতরে, আর কৃষক প্রদর্শনী চলে সারাক্ষণ — দেশি বীজ, প্রাকৃতিক উপকরণ, এবং প্রতিটি পুরস্কার বিভাগের পিছনের খামার।",
+    prog1:"কৃষক প্রদর্শনী", prog1Text:"সব দিন · দেশি বীজ, প্রাকৃতিক উপকরণ ও প্রতিটি পুরস্কারের পিছনের কাজ",
+    prog2:"কৃষক সমাজ পুরস্কার অনুষ্ঠান", prog2Text:"এক সন্ধ্যা · সব বিভাগের বিজয়ীরা মঞ্চে সম্মানিত",
+    prog3:"কৃষক-থেকে-কৃষক আলোচনা", prog3Text:"পুরস্কারের চূড়ান্ত তালিকাভুক্তরা বলবেন তাঁরা আসলে কী বদলেছেন",
+    pressEyebrow:"সংবাদমাধ্যমের জন্য", pressTitle:"তথ্য, এক জায়গায়।",
+    press1:"<strong>কী:</strong> কৃষক সমাজ পূজা — টেকসই কৃষি থিমের দুর্গাপূজা, যা পশ্চিমবঙ্গে এই ধরনের প্রথম বলে মনে করা হচ্ছে।",
+    press2:"<strong>কারা:</strong> ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ নিবেদিত — একটি জাতীয় কৃষক সংগঠনের রাজ্য শাখা, নিবন্ধন নং S/60440/2007।",
+    press3:"<strong>নেতৃত্ব:</strong> মহাচার্য সৌরভ জে. সরকার, ৩০ জুন ২০২৬ নয়াদিল্লিতে সর্বভারতীয় সভাপতি ড. কৃষণ বীর চৌধুরী কর্তৃক রাজ্য সভাপতি নিযুক্ত।",
+    press4:"<strong>পুরস্কার:</strong> সাতটি কৃষিধারায় কৃষক সমাজ পুরস্কার, পশ্চিমবঙ্গের যে কোনও কৃষক বা সম্প্রদায়ের সদস্যের মনোনয়নের জন্য উন্মুক্ত, কোনও প্রবেশমূল্য ছাড়াই।",
+    press5:"<strong>কেন গুরুত্বপূর্ণ:</strong> বাংলা সব বিষয়ে প্যান্ডেল সাজায়, শুধু সেই কৃষি বাদে যার উপর রাজ্যটি দাঁড়িয়ে। এই পূজা উৎসবকে সেই ফসলের কাছেই ফিরিয়ে আনে যার সময়ে সেটি বাঁধা ছিল।",
+    pressProfile:"রাজ্য সভাপতির পরিচিতি (PDF)", pressProfileHi:"হিন্দি পরিচিতি (PDF)", pressPlatform:"BKS পশ্চিমবঙ্গ মঞ্চ",
+    pujaQuote:"“দেবী দুর্গা চিরকাল নবপত্রিকা নিয়েই এসেছেন। ফসল কখনও পূজা থেকে আলাদা ছিল না — আমরা শুধু সেটা বলা বন্ধ করে দিয়েছিলাম।”",
+    footerBrand:"কৃষক সমাজ পূজা · ভারতীয় কৃষক সমাজ, পশ্চিমবঙ্গ",
+    footerText:"অন্নদাতার জন্য একটি দুর্গাপূজা। টেকসই কৃষি, কৃষকের স্বীকৃতি, এবং উৎসবের ফসলের কাছে ফেরা।",
+    categories:{
+      best_farmer_overall:{name:"শ্রেষ্ঠ কৃষক — সামগ্রিক", desc:"এই বছর সারা পশ্চিমবঙ্গে চিহ্নিত সবচেয়ে অসামান্য কৃষক।"},
+      fishery:{name:"মৎস্য চাষ", desc:"মাছ চাষ ও জলজ কৃষিতে উৎকর্ষ ও উদ্ভাবন, নোনা জল ও জলাভূমির ব্যবস্থা সহ।"},
+      animal_husbandry:{name:"পশুপালন", desc:"দুগ্ধ, পোলট্রি, ছাগল বা গবাদি পশু পালনে উৎকর্ষ।"},
+      urban_kitchen_gardening:{name:"নগর ও কিচেন গার্ডেনিং", desc:"শহর ও মফস্বলে ছাদ, বারান্দা ও ছোট জমিতে উদ্ভাবনী চাষ।"},
+      modern_tech_farming:{name:"আধুনিক ও প্রযুক্তি-নির্ভর চাষ", desc:"নতুন কৌশল, যন্ত্রায়ণ, সংরক্ষিত চাষ বা কৃষি-প্রযুক্তির বাস্তব প্রয়োগ।"},
+      organic_natural:{name:"জৈব ও প্রাকৃতিক চাষ", desc:"রাসায়নিকমুক্ত ও প্রাকৃতিক পদ্ধতি, কেন্দ্রে মাটির স্বাস্থ্য ও দেশি উপকরণ।"},
+      horticulture_floriculture:{name:"উদ্যানপালন ও ফুলচাষ", desc:"ফল, সবজি, মশলা ও ফুলের চাষ, ব্যতিক্রমী দক্ষতায়।"}
+    },
+    tiers:{
+      title:{name:"প্রধান পৃষ্ঠপোষক", note:"মাত্র একজন", benefits:["আপনার নামের সঙ্গে পূজা নিবেদিত","মূল তোরণ ও মঞ্চে নাম ও লোগো","সব প্রশস্তি ও প্রেস উপকরণে নাম","পুরস্কার অনুষ্ঠানে বক্তব্যের সুযোগ","পূজার সব দিন স্টল"]},
+      category:{name:"পুরস্কার বিভাগ পৃষ্ঠপোষক", note:"বিভাগ পিছু একজন", benefits:["একটি পুরস্কার আপনার প্রতিষ্ঠানের নামে","সেই বিভাগের প্রতিটি উল্লেখে আপনার নাম","মঞ্চে পুরস্কার প্রদানের সুযোগ","প্যান্ডেল পৃষ্ঠপোষক বোর্ডে লোগো","পূজার সব দিন স্টল"]},
+      pandal:{name:"প্যান্ডেল সহযোগী", note:"সীমিত", benefits:["প্যান্ডেল পৃষ্ঠপোষক বোর্ডে লোগো","পূজার কর্মসূচিতে নাম","অনুষ্ঠানে মঞ্চ থেকে উল্লেখ","পুরস্কারের দিন স্টল"]},
+      community:{name:"সম্প্রদায় সহযোগী", note:"FPO, কৃষক গোষ্ঠী ও স্থানীয় ব্যবসার জন্য", benefits:["সম্প্রদায় সহযোগী বোর্ডে নাম","পূজার কর্মসূচিতে নাম","পুরস্কার অনুষ্ঠানে আমন্ত্রণ"]}
+    },
+    rt:{
+      slotsOne:"১টি উপলব্ধ", slotsN:"{n}টি উপলব্ধ", slotsOpen:"উন্মুক্ত",
+      tierUndecided:"এখনও ঠিক করিনি — পরামর্শ দিন",
+      categoryNone:"বিশেষ পছন্দ নেই",
+      submitting:"পাঠানো হচ্ছে…",
+      nomSuccess:"মনোনয়ন পেয়েছি। ধন্যবাদ। সংক্ষিপ্ত তালিকায় এলে কমিটি দেওয়া নম্বরে ফোন করবে।",
+      nomDuplicate:"এই কৃষককে এই বিভাগে আগেই মনোনীত করা হয়েছে। বিভাগ পিছু একটি মনোনয়নই যথেষ্ট — কমিটির কাছে সেটি আছে।",
+      sponsorSuccess:"জিজ্ঞাসা পেয়েছি। কৃষক সমাজ পূজা কমিটির কেউ আপনাকে ফোন করবেন।",
+      sponsorDuplicate:"এই নম্বর থেকে একটি জিজ্ঞাসা ইতিমধ্যেই খোলা আছে। কমিটি যোগাযোগ করবে — আবার পাঠানোর দরকার নেই।",
+      errPhone:"অনুগ্রহ করে ১০ সংখ্যার বৈধ ভারতীয় মোবাইল নম্বর দিন।",
+      errConsent:"পাঠানোর আগে প্রয়োজনীয় সম্মতি দিন।",
+      errOffline:"ডেটাবেসে পৌঁছনো যায়নি, তাই আপনার ফর্ম ফাইল হিসেবে ডাউনলোড হয়েছে। অনুগ্রহ করে সেটি কৃষক সমাজ পূজা কমিটিকে পাঠান।",
+      errGeneric:"কিছু গ্রহণ করা যায়নি। অনুগ্রহ করে ফর্মটি দেখে আবার চেষ্টা করুন।"
+    }
+  }
+};
+
+/* ------------------------------------------------------------------ */
+/* i18n                                                                */
+/* ------------------------------------------------------------------ */
+
+const LOCALES = { en:'en-IN', hi:'hi-IN', bn:'bn-IN' };
+
+function lang(){ return document.body.dataset.lang || 'en'; }
+function dict(){ return translations[lang()] || translations.en; }
+function t(key){ return dict()[key] || translations.en[key] || ''; }
+
+function rt(key, vars){
+  const source = (dict().rt && dict().rt[key]) || translations.en.rt[key] || '';
+  if(!vars) return source;
+  return Object.keys(vars).reduce((text, name)=> text.split('{'+name+'}').join(vars[name]), source);
+}
+
+function localised(entry){
+  if(!entry) return '';
+  return entry[lang()] || entry.en || '';
+}
+
+function money(amount){
+  try{
+    return new Intl.NumberFormat(LOCALES[lang()] || 'en-IN', {
+      style:'currency', currency:'INR', maximumFractionDigits:0
+    }).format(amount);
+  }catch(error){
+    return '₹' + amount.toLocaleString('en-IN');
+  }
+}
+
+function setLanguage(code){
+  if(!translations[code]) code = 'en';
+  document.body.dataset.lang = code;
+  document.documentElement.lang = code;
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const value = translations[code][el.dataset.i18n];
+    if(!value) return;
+    // Translation strings are authored in this file, never user input, so a
+    // few of them legitimately carry <strong> / <em>.
+    if(value.indexOf('<') !== -1) el.innerHTML = value;
+    else el.textContent = value;
+  });
+  document.querySelectorAll('.lang-switch button').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === code);
+  });
+  localStorage.setItem('bksLang', code);
+  renderEventFacts();
+  renderAwards();
+  renderTiers();
+  renderSelects();
+}
+
+document.querySelectorAll('.lang-switch button').forEach(btn=>{
+  btn.addEventListener('click', ()=>setLanguage(btn.dataset.lang));
+});
+
+/* ------------------------------------------------------------------ */
+/* Rendering from config                                               */
+/* ------------------------------------------------------------------ */
+
+function renderEventFacts(){
+  const dates = localised(PUJA.dates.display);
+  const note = localised(PUJA.dates.note);
+  const venue = localised(PUJA.venue.short);
+  const venueDetail = localised(PUJA.venue.detail);
+
+  const heroDates = document.getElementById('heroDates');
+  if(heroDates) heroDates.textContent = `${dates} · ${venue}`;
+
+  const when = document.getElementById('metaWhen');
+  if(when) when.textContent = dates;
+
+  const where = document.getElementById('metaWhere');
+  if(where) where.textContent = venue;
+
+  const facts = document.getElementById('visitFacts');
+  if(facts){
+    facts.innerHTML = `
+      <div><span>${t('metaWhenLabel')}</span><strong>${dates}</strong><small>${note}</small></div>
+      <div><span>${t('metaWhereLabel')}</span><strong>${venue}</strong><small>${venueDetail}</small></div>
+      <div><span>${t('prog2')}</span><strong>${localised(PUJA.ceremony)}</strong><small>${note}</small></div>`;
+  }
+
+  const direct = document.getElementById('sponsorDirect');
+  const details = document.getElementById('sponsorDirectDetails');
+  if(direct && details){
+    const parts = [];
+    if(PUJA.contact.phone) parts.push(PUJA.contact.phone);
+    if(PUJA.contact.email) parts.push(PUJA.contact.email);
+    // Stays hidden until real contact details exist in the config block.
+    direct.hidden = parts.length === 0;
+    details.textContent = parts.join(' · ');
+  }
+}
+
+function renderAwards(){
+  const grid = document.getElementById('awardGrid');
+  if(!grid) return;
+  const cats = dict().categories || translations.en.categories;
+  grid.innerHTML = PUJA.categories.map((id, index)=>{
+    const cat = cats[id] || translations.en.categories[id];
+    return `<article class="award-card">
+      <span class="award-index">${String(index + 1).padStart(2,'0')}</span>
+      <h3>${cat.name}</h3>
+      <p>${cat.desc}</p>
+    </article>`;
+  }).join('');
+}
+
+function slotLabel(slots){
+  if(slots === null || slots === undefined) return rt('slotsOpen');
+  if(slots === 1) return rt('slotsOne');
+  return rt('slotsN', {n: slots});
+}
+
+function renderTiers(){
+  const grid = document.getElementById('tierGrid');
+  if(!grid) return;
+  const tiers = dict().tiers || translations.en.tiers;
+  grid.innerHTML = PUJA.tiers.map((tier, index)=>{
+    const copy = tiers[tier.id] || translations.en.tiers[tier.id];
+    return `<article class="tier-card${index === 0 ? ' featured' : ''}">
+      <p class="tier-slots">${slotLabel(tier.slots)}</p>
+      <h3>${copy.name}</h3>
+      <p class="tier-amount">${money(tier.amount)}</p>
+      <p class="tier-note">${copy.note}</p>
+      <ul>${copy.benefits.map(b=>`<li>${b}</li>`).join('')}</ul>
+      <a class="button ${index === 0 ? 'primary' : 'outline'}" href="#sponsorForm" data-tier="${tier.id}">${t('heroCta1')}</a>
+    </article>`;
+  }).join('');
+
+  grid.querySelectorAll('a[data-tier]').forEach(link=>{
+    link.addEventListener('click', ()=>{
+      const select = document.getElementById('sponsorTierSelect');
+      if(select) select.value = link.dataset.tier;
+    });
+  });
+}
+
+function renderSelects(){
+  const cats = dict().categories || translations.en.categories;
+
+  const nominationCategory = document.getElementById('nominationCategory');
+  if(nominationCategory){
+    const current = nominationCategory.value;
+    nominationCategory.innerHTML = `<option value="">${t('optSelect')}</option>` +
+      PUJA.categories.map(id=>`<option value="${id}">${(cats[id]||translations.en.categories[id]).name}</option>`).join('');
+    if(current) nominationCategory.value = current;
+  }
+
+  const tierSelect = document.getElementById('sponsorTierSelect');
+  if(tierSelect){
+    const current = tierSelect.value;
+    const tiers = dict().tiers || translations.en.tiers;
+    tierSelect.innerHTML = PUJA.tiers.map(tier=>
+      `<option value="${tier.id}">${(tiers[tier.id]||translations.en.tiers[tier.id]).name} · ${money(tier.amount)}</option>`
+    ).join('') + `<option value="undecided">${rt('tierUndecided')}</option>`;
+    if(current) tierSelect.value = current;
+  }
+
+  const categorySelect = document.getElementById('sponsorCategorySelect');
+  if(categorySelect){
+    const current = categorySelect.value;
+    categorySelect.innerHTML = `<option value="">${rt('categoryNone')}</option>` +
+      PUJA.categories.map(id=>`<option value="${id}">${(cats[id]||translations.en.categories[id]).name}</option>`).join('');
+    if(current) categorySelect.value = current;
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Supabase                                                            */
+/* ------------------------------------------------------------------ */
+
+function headers(){
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+async function insertInto(table, row){
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: headers(),
+    body: JSON.stringify(row)
+  });
+  if(response.ok) return { ok: true };
+  const detail = await response.text().catch(()=>'');
+  if(response.status === 409 || detail.indexOf('duplicate key') !== -1){
+    return { ok: false, duplicate: true };
+  }
+  // 4xx from the policy or a check constraint is a rejection, not an outage.
+  if(response.status >= 400 && response.status < 500){
+    return { ok: false, rejected: true, detail };
+  }
+  throw new Error(detail || `Database returned ${response.status}`);
+}
+
+async function readView(view, query){
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${view}?${query}`, {
+    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+  });
+  if(!response.ok) throw new Error(`Database returned ${response.status}`);
+  return response.json();
+}
+
+function phoneDigits(value){
+  const digits = String(value || '').replace(/\D/g, '');
+  return digits.length > 10 ? digits.slice(-10) : digits;
+}
+
+function validPhone(value){
+  return /^[6-9]\d{9}$/.test(value);
+}
+
+function downloadJson(payload, prefix){
+  const stamp = (payload.farmer_name || payload.organisation_name || 'entry')
+    .toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
+  const blob = new Blob([JSON.stringify(payload, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${prefix}-${stamp || 'entry'}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+}
+
+function status(el, kind, message){
+  el.className = `form-status ${kind}`;
+  el.textContent = message;
+}
+
+/* ------------------------------------------------------------------ */
+/* Nomination form                                                     */
+/* ------------------------------------------------------------------ */
+
+const nominationForm = document.getElementById('nominationForm');
+const nominationStatus = document.getElementById('nominationStatus');
+const nominatorBlock = document.getElementById('nominatorBlock');
+
+function collectNomination(){
+  const data = Object.fromEntries(new FormData(nominationForm).entries());
+  const onBehalf = data.nomination_type === 'on_behalf';
+  return {
+    nomination_type: data.nomination_type || 'self',
+    nominator_name: onBehalf ? (data.nominator_name || '').trim() || null : null,
+    nominator_phone: onBehalf ? phoneDigits(data.nominator_phone) || null : null,
+    nominator_relationship: onBehalf ? (data.nominator_relationship || '').trim() || null : null,
+    category: data.category,
+    farmer_name: (data.farmer_name || '').trim(),
+    farmer_phone: phoneDigits(data.farmer_phone),
+    farmer_district: data.farmer_district,
+    farmer_block: (data.farmer_block || '').trim() || null,
+    farmer_village: (data.farmer_village || '').trim() || null,
+    farmer_gender: data.farmer_gender || null,
+    years_farming: data.years_farming ? Number(data.years_farming) : null,
+    land_holding: data.land_holding || null,
+    what_they_grow: (data.what_they_grow || '').trim() || null,
+    innovation_summary: (data.innovation_summary || '').trim(),
+    impact_summary: (data.impact_summary || '').trim() || null,
+    social_links: (data.social_links || '').trim() || null,
+    featured_by_channel: (data.featured_by_channel || '').trim() || null,
+    consent_contact: Boolean(data.consent_contact),
+    consent_data: Boolean(data.consent_data),
+    source: 'krishak-samaj-puja',
+    language_context: lang(),
+    submitted_at: new Date().toISOString()
+  };
+}
+
+if(nominationForm){
+  nominationForm.addEventListener('change', event=>{
+    if(event.target.name === 'nomination_type'){
+      nominatorBlock.hidden = event.target.value !== 'on_behalf';
+    }
+  });
+
+  nominationForm.addEventListener('submit', async event=>{
+    event.preventDefault();
+    if(!nominationForm.reportValidity()) return;
+    const row = collectNomination();
+
+    if(!validPhone(row.farmer_phone)){
+      status(nominationStatus, 'error', rt('errPhone'));
+      return;
+    }
+    if(!row.consent_contact || !row.consent_data){
+      status(nominationStatus, 'error', rt('errConsent'));
+      return;
+    }
+
+    const button = nominationForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    status(nominationStatus, '', rt('submitting'));
+
+    try{
+      const result = await insertInto('bks_puja_award_nominations', row);
+      if(result.ok){
+        status(nominationStatus, 'success', rt('nomSuccess'));
+        nominationForm.reset();
+        nominatorBlock.hidden = true;
+        loadCounters();
+      } else if(result.duplicate){
+        status(nominationStatus, 'error', rt('nomDuplicate'));
+      } else {
+        console.warn('Nomination rejected:', result.detail);
+        status(nominationStatus, 'error', rt('errGeneric'));
+      }
+    }catch(error){
+      console.warn('Nomination fallback:', error);
+      downloadJson(row, 'krishak-samaj-puja-nomination');
+      status(nominationStatus, 'error', rt('errOffline'));
+    }finally{
+      button.disabled = false;
+    }
+  });
+}
+
+const downloadNominationBtn = document.getElementById('downloadNomination');
+if(downloadNominationBtn){
+  downloadNominationBtn.addEventListener('click', ()=>{
+    downloadJson(collectNomination(), 'krishak-samaj-puja-nomination');
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Sponsor form                                                        */
+/* ------------------------------------------------------------------ */
+
+const sponsorForm = document.getElementById('sponsorForm');
+const sponsorStatus = document.getElementById('sponsorStatus');
+
+function collectSponsor(){
+  const data = Object.fromEntries(new FormData(sponsorForm).entries());
+  return {
+    organisation_name: (data.organisation_name || '').trim(),
+    contact_person: (data.contact_person || '').trim(),
+    designation: (data.designation || '').trim() || null,
+    phone: phoneDigits(data.phone),
+    email: (data.email || '').trim() || null,
+    website: (data.website || '').trim() || null,
+    sector: data.sector || null,
+    tier_interest: data.tier_interest || null,
+    category_interest: data.category_interest || null,
+    budget_indication: (data.budget_indication || '').trim() || null,
+    message: (data.message || '').trim() || null,
+    consent_contact: Boolean(data.consent_contact),
+    consent_public_listing: Boolean(data.consent_public_listing),
+    source: 'krishak-samaj-puja',
+    language_context: lang(),
+    submitted_at: new Date().toISOString()
+  };
+}
+
+if(sponsorForm){
+  sponsorForm.addEventListener('submit', async event=>{
+    event.preventDefault();
+    if(!sponsorForm.reportValidity()) return;
+    const row = collectSponsor();
+
+    if(!validPhone(row.phone)){
+      status(sponsorStatus, 'error', rt('errPhone'));
+      return;
+    }
+    if(!row.consent_contact){
+      status(sponsorStatus, 'error', rt('errConsent'));
+      return;
+    }
+
+    const button = sponsorForm.querySelector('button[type="submit"]');
+    button.disabled = true;
+    status(sponsorStatus, '', rt('submitting'));
+
+    try{
+      const result = await insertInto('bks_puja_sponsors', row);
+      if(result.ok){
+        status(sponsorStatus, 'success', rt('sponsorSuccess'));
+        sponsorForm.reset();
+        renderSelects();
+      } else if(result.duplicate){
+        status(sponsorStatus, 'error', rt('sponsorDuplicate'));
+      } else {
+        console.warn('Sponsor enquiry rejected:', result.detail);
+        status(sponsorStatus, 'error', rt('errGeneric'));
+      }
+    }catch(error){
+      console.warn('Sponsor enquiry fallback:', error);
+      downloadJson(row, 'krishak-samaj-puja-sponsor');
+      status(sponsorStatus, 'error', rt('errOffline'));
+    }finally{
+      button.disabled = false;
+    }
+  });
+}
+
+const downloadSponsorBtn = document.getElementById('downloadSponsor');
+if(downloadSponsorBtn){
+  downloadSponsorBtn.addEventListener('click', ()=>{
+    downloadJson(collectSponsor(), 'krishak-samaj-puja-sponsor');
+  });
+}
+
+/* ------------------------------------------------------------------ */
+/* Public counters and sponsor wall                                    */
+/* ------------------------------------------------------------------ */
+
+async function loadCounters(){
+  const nominations = document.getElementById('countNominations');
+  const districts = document.getElementById('countDistricts');
+  if(!nominations) return;
+  try{
+    const rows = await readView('bks_puja_nomination_stats', 'select=category,nominations,districts');
+    const total = rows.reduce((sum, row)=> sum + Number(row.nominations || 0), 0);
+    const maxDistricts = rows.reduce((max, row)=> Math.max(max, Number(row.districts || 0)), 0);
+    nominations.textContent = total.toLocaleString(LOCALES[lang()] || 'en-IN');
+    districts.textContent = maxDistricts.toLocaleString(LOCALES[lang()] || 'en-IN');
+  }catch(error){
+    console.info('Nomination counters unavailable:', error);
+    nominations.textContent = '0';
+    districts.textContent = '0';
+  }
+}
+
+async function loadSponsorWall(){
+  const wall = document.getElementById('sponsorWall');
+  const grid = document.getElementById('wallGrid');
+  if(!wall || !grid) return;
+  try{
+    const rows = await readView('bks_puja_public_sponsors', 'select=organisation_name,tier,website');
+    if(!Array.isArray(rows) || rows.length === 0) return;
+    grid.innerHTML = rows.map(row=>{
+      const name = row.website
+        ? `<a href="${row.website}" rel="noopener noreferrer" target="_blank">${row.organisation_name}</a>`
+        : row.organisation_name;
+      return `<div class="wall-item"><strong>${name}</strong><span>${row.tier || ''}</span></div>`;
+    }).join('');
+    wall.hidden = false;
+  }catch(error){
+    console.info('Sponsor wall unavailable:', error);
+  }
+}
+
+setLanguage(localStorage.getItem('bksLang') || 'en');
+loadCounters();
+loadSponsorWall();
