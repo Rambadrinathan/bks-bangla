@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Become a booth volunteer · Bharatiya Krishak Samaj</title>
+<meta name="description" content="One volunteer for every polling booth in West Bengal. Find the school where you vote and join in under a minute." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/volunteer/easy/easy.css" />
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-brand">
+    <img src="/assets/bks-logo.png" alt="" class="bar-logo" onerror="this.style.display='none'" />
+    <span>Bharatiya Krishak Samaj</span>
+  </div>
+  <div class="lang" role="group" aria-label="Language">
+    <button type="button" data-lang="en" class="active">English</button>
+    <button type="button" data-lang="bn">বাংলা</button>
+  </div>
+</header>
+
+<div class="dots" id="dots" aria-hidden="true">
+  <i class="on"></i><i></i><i></i>
+</div>
+
+<main id="main">
+
+  <!-- ---------------------------------------------------------------- -->
+  <!-- SCREEN 1 — find the place he votes in                             -->
+  <!-- ---------------------------------------------------------------- -->
+  <section class="screen show" id="s1">
+    <h1 data-t="q1">Where do you vote?</h1>
+    <p class="help" data-t="q1help">Type the name of your school or your village.</p>
+
+    <div class="searchrow">
+      <input
+        id="q"
+        type="search"
+        autocomplete="off"
+        autocorrect="off"
+        spellcheck="false"
+        enterkeyhint="search"
+        data-tph="q1ph"
+        placeholder="School or village name" />
+      <button type="button" id="mic" class="mic" data-ta="micLabel" aria-label="Speak instead of typing">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M18 11a6 6 0 0 1-12 0M12 17v4"/></svg>
+      </button>
+    </div>
+
+    <p class="hint" id="searchHint" data-t="q1hint">Start typing — at least 3 letters.</p>
+
+    <ul class="results" id="results"></ul>
+
+    <button type="button" class="linky" id="browseBtn" data-t="dontKnow">I don't know the name — show me a list</button>
+
+    <!-- browse fallback -->
+    <div class="browse" id="browse" hidden>
+      <label class="fld">
+        <span data-t="lblDistrict">Your district</span>
+        <select id="bDistrict"></select>
+      </label>
+      <label class="fld" id="bAcWrap" hidden>
+        <span data-t="lblAc">Your area</span>
+        <select id="bAc"></select>
+      </label>
+      <p class="hint" id="browseHint" hidden data-t="browseHint">Now find your school in the list.</p>
+      <ul class="results" id="bResults"></ul>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <!-- SCREEN 2 — confirm the booth                                      -->
+  <!-- ---------------------------------------------------------------- -->
+  <section class="screen" id="s2">
+    <h1 data-t="q2">Is this where you vote?</h1>
+
+    <div class="bigcard" id="pickCard">
+      <div class="bigcard-name" id="pickName"></div>
+      <div class="bigcard-sub" id="pickSub"></div>
+      <button type="button" class="speak" data-speak="pick" aria-label="Read this aloud">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4Z"/><path d="M17 8a5 5 0 0 1 0 8"/></svg>
+        <span data-t="listen">Listen</span>
+      </button>
+    </div>
+
+    <!-- shown only when one building holds several booths -->
+    <div id="multi" hidden>
+      <p class="help" data-t="multiHelp">This school has more than one booth. Pick the one that is free — if you are not sure, choose the first. We will confirm it when we call you.</p>
+      <ul class="results tight" id="multiList"></ul>
+    </div>
+
+    <div id="statusBox" class="status" hidden></div>
+
+    <div class="actions">
+      <button type="button" class="btn primary big" id="yesBtn" data-t="yes">Yes, this is my booth</button>
+      <button type="button" class="linky" id="noBtn" data-t="no">No, search again</button>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <!-- SCREEN 3 — who are you (2 fields, nothing else)                   -->
+  <!-- ---------------------------------------------------------------- -->
+  <section class="screen" id="s3">
+    <h1 data-t="q3">What is your name?</h1>
+
+    <label class="fld big">
+      <span data-t="lblName">Your name</span>
+      <span class="withmic">
+        <input id="name" type="text" autocomplete="name" maxlength="120" data-tph="namePh" placeholder="Your full name" />
+        <button type="button" id="micName" class="mic small" aria-label="Speak your name">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M18 11a6 6 0 0 1-12 0M12 17v4"/></svg>
+        </button>
+      </span>
+    </label>
+
+    <label class="fld big">
+      <span data-t="lblPhone">Your mobile number</span>
+      <input id="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="10" placeholder="10 digits" />
+    </label>
+
+    <p class="hint" data-t="phoneWhy">We call this number to confirm. It is never shown on the website.</p>
+
+    <div id="formStatus" class="status" hidden></div>
+
+    <p class="hint consent" data-t="consent">By pressing Join you agree that BKS may call you on this number about booth work.</p>
+
+    <div class="actions">
+      <button type="button" class="btn primary big" id="joinBtn" data-t="join">Join</button>
+      <button type="button" class="linky" id="backBtn" data-t="back">Back</button>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------------- -->
+  <!-- SCREEN 4 — done                                                   -->
+  <!-- ---------------------------------------------------------------- -->
+  <section class="screen" id="s4">
+    <div class="tick" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="m4 13 5 5L20 7"/></svg>
+    </div>
+    <h1 data-t="doneTitle">You are the volunteer for your booth</h1>
+    <div class="bigcard done">
+      <div class="bigcard-name" id="doneName"></div>
+      <div class="bigcard-sub" id="doneSub"></div>
+    </div>
+    <p class="help" data-t="codeHelp">Keep this number. Show it when someone from BKS calls you.</p>
+    <div class="code" id="code"></div>
+    <div class="actions">
+      <a class="btn wa big" id="waBtn" target="_blank" rel="noopener" data-t="sendWa">Send to my WhatsApp</a>
+    </div>
+  </section>
+
+</main>
+
+<script src="/volunteer/easy/easy.js"></script>
+</body>
+</html>

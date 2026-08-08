@@ -1,0 +1,200 @@
+/* Booth volunteer — the easy flow.
+   Designed for a phone held by someone who reads slowly, in poor light,
+   outdoors. Every rule here follows from that: nothing under 17px, tap
+   targets never under 56px, one question per screen, high contrast, and
+   no reliance on colour alone to carry meaning. */
+
+:root{
+  --green:#174f35;
+  --green-d:#0f3927;
+  --gold:#c7902d;
+  --cream:#fff8e8;
+  --paper:#fffdf5;
+  --ink:#1d2b22;
+  --muted:#5c6a5f;
+  --line:rgba(23,79,53,.18);
+  --ok:#12643c;
+  --warn:#8d3722;
+  --tap:60px;
+}
+
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;
+  font-family:Hind,"Noto Sans Bengali",system-ui,sans-serif;
+  font-size:19px;
+  line-height:1.5;
+  color:var(--ink);
+  background:var(--cream);
+  /* room for the browser chrome on small phones */
+  padding-bottom:env(safe-area-inset-bottom);
+}
+body.bn{font-family:"Noto Sans Bengali",Hind,system-ui,sans-serif}
+
+/* ---------- top bar ---------- */
+.bar{
+  position:sticky;top:0;z-index:10;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;
+  background:rgba(255,248,232,.95);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--line);
+}
+.bar-brand{display:flex;align-items:center;gap:9px;min-width:0}
+.bar-brand span{
+  font-weight:700;color:var(--green);font-size:15px;line-height:1.15;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.bar-logo{width:34px;height:34px;object-fit:contain;border-radius:8px;flex:none}
+.lang{display:flex;gap:4px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:3px;flex:none}
+.lang button{
+  border:0;background:transparent;border-radius:999px;
+  padding:8px 12px;font:inherit;font-size:15px;font-weight:700;
+  color:var(--green);cursor:pointer;min-height:40px;
+}
+.lang button.active{background:var(--green);color:#fff}
+
+/* ---------- progress: dots, not words ---------- */
+.dots{display:flex;justify-content:center;gap:9px;padding:16px 0 2px}
+.dots i{width:10px;height:10px;border-radius:50%;background:var(--line);transition:background .2s,transform .2s}
+.dots i.on{background:var(--green);transform:scale(1.25)}
+
+/* ---------- screens ---------- */
+main{max-width:640px;margin:0 auto;padding:6px 18px 64px}
+.screen{display:none}
+.screen.show{display:block;animation:in .22s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+h1{
+  margin:18px 0 8px;
+  font-size:30px;line-height:1.2;letter-spacing:-.02em;
+  color:var(--green-d);font-weight:700;text-wrap:balance;
+}
+.help{margin:0 0 16px;color:var(--muted);font-size:18px}
+.hint{margin:10px 2px;color:var(--muted);font-size:16px}
+
+/* ---------- search ---------- */
+.searchrow{display:flex;gap:10px;align-items:stretch}
+#q{
+  flex:1;min-width:0;
+  font:inherit;font-size:21px;
+  padding:16px 16px;
+  min-height:var(--tap);
+  border:2px solid var(--line);border-radius:16px;
+  background:#fff;color:var(--ink);
+}
+#q:focus{outline:0;border-color:var(--green);box-shadow:0 0 0 4px rgba(23,79,53,.13)}
+.mic{
+  flex:none;width:var(--tap);min-height:var(--tap);
+  border:2px solid var(--line);border-radius:16px;background:#fff;
+  display:grid;place-items:center;cursor:pointer;
+}
+.mic svg{width:26px;height:26px;fill:none;stroke:var(--green);stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mic.small{width:52px;min-height:52px;border-radius:14px}
+.mic.on{background:var(--green);border-color:var(--green);animation:pulse 1.1s infinite}
+.mic.on svg{stroke:#fff}
+.mic[hidden]{display:none}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(23,79,53,.4)}50%{box-shadow:0 0 0 12px rgba(23,79,53,0)}}
+
+/* ---------- result list ---------- */
+.results{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:10px}
+.results.tight{gap:8px}
+.results li{margin:0}
+.pick{
+  display:block;width:100%;text-align:left;
+  font:inherit;cursor:pointer;
+  padding:15px 16px;min-height:var(--tap);
+  background:#fff;border:2px solid var(--line);border-radius:16px;
+}
+.pick:hover,.pick:focus-visible{border-color:var(--green);outline:0}
+.pick b{display:block;font-size:20px;line-height:1.3;color:var(--green-d)}
+.pick small{display:block;margin-top:3px;font-size:16px;color:var(--muted)}
+
+/* ---------- the confirm card ---------- */
+.bigcard{
+  background:#fff;border:2px solid var(--green);border-radius:22px;
+  padding:22px 20px;margin:6px 0 18px;
+  box-shadow:0 14px 40px rgba(23,79,53,.13);
+}
+.bigcard.done{border-color:var(--line);box-shadow:none}
+.bigcard-name{font-size:26px;line-height:1.25;font-weight:700;color:var(--green-d)}
+.bigcard-sub{margin-top:7px;font-size:18px;color:var(--muted)}
+.speak{
+  margin-top:16px;
+  display:inline-flex;align-items:center;gap:9px;
+  font:inherit;font-size:17px;font-weight:700;color:var(--green);
+  background:var(--cream);border:2px solid var(--line);border-radius:999px;
+  padding:11px 18px;min-height:52px;cursor:pointer;
+}
+.speak svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.speak[hidden]{display:none}
+
+/* ---------- fields ---------- */
+.fld{display:block;margin:0 0 18px}
+.fld > span{display:block;margin-bottom:7px;font-size:18px;font-weight:700;color:var(--green-d)}
+.fld input,.fld select{
+  width:100%;font:inherit;font-size:21px;
+  padding:16px;min-height:var(--tap);
+  border:2px solid var(--line);border-radius:16px;background:#fff;color:var(--ink);
+}
+.fld input:focus,.fld select:focus{outline:0;border-color:var(--green);box-shadow:0 0 0 4px rgba(23,79,53,.13)}
+.withmic{display:flex;gap:10px;align-items:stretch}
+.withmic input{flex:1;min-width:0}
+
+/* ---------- buttons ---------- */
+.actions{margin-top:22px;display:grid;gap:12px;justify-items:stretch}
+.btn{
+  display:block;width:100%;text-align:center;text-decoration:none;
+  font:inherit;font-weight:700;cursor:pointer;
+  padding:18px;min-height:64px;border-radius:18px;border:2px solid transparent;
+}
+.btn.big{font-size:21px}
+.btn.primary{background:var(--green);color:#fff}
+.btn.primary:disabled{opacity:.55;cursor:default}
+.btn.wa{background:#25d366;color:#08301b}
+.linky{
+  display:block;width:100%;
+  background:none;border:0;font:inherit;font-size:18px;font-weight:700;
+  color:var(--green);text-decoration:underline;cursor:pointer;
+  padding:14px;min-height:52px;
+}
+
+/* ---------- status ---------- */
+.status{
+  margin:16px 0 0;padding:15px 16px;border-radius:16px;
+  font-size:18px;font-weight:600;border:2px solid var(--line);background:#fff;
+}
+.status.ok{background:#e8f5e5;border-color:rgba(25,117,68,.3);color:var(--ok)}
+.status.warn{background:#fbeae4;border-color:rgba(162,66,47,.32);color:var(--warn)}
+.status.busy{background:#f4f1e4;color:var(--muted)}
+
+/* ---------- done ---------- */
+.tick{
+  width:76px;height:76px;margin:22px auto 4px;border-radius:50%;
+  background:#e8f5e5;display:grid;place-items:center;
+}
+.tick svg{width:40px;height:40px;fill:none;stroke:var(--ok);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+#s4 h1{text-align:center}
+.code{
+  margin:12px 0 4px;padding:18px;text-align:center;
+  font-size:27px;font-weight:700;letter-spacing:.06em;
+  color:var(--green-d);background:#fff;
+  border:2px dashed var(--green);border-radius:18px;
+  word-break:break-all;
+}
+
+.browse{margin-top:18px}
+
+@media (max-width:380px){
+  body{font-size:18px}
+  h1{font-size:26px}
+  .bigcard-name{font-size:23px}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+
+/* Consent sits next to the button that acts on it, never hidden in a
+   checkbox someone taps without reading. */
+.consent{margin:14px 2px 0;font-size:16px;line-height:1.45}
