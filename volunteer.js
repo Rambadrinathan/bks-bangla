@@ -544,9 +544,9 @@ function populateConstituencySelect(){
 async function lookupBoothName(acNo, boothNo){
   try{
     const rows = await selectFrom('bks_wb_booths',
-      `select=part_name&ac_no=eq.${acNo}&part_no=eq.${boothNo}&limit=1`);
+      `select=booth_name&ac_no=eq.${acNo}&booth_no=eq.${boothNo}&limit=1`);
     if(!Array.isArray(rows)) return null;
-    return rows.length ? (rows[0].part_name || '') : '';
+    return rows.length ? (rows[0].booth_name || '') : '';
   }catch(error){
     console.info('Booth reference unavailable:', error);
     return null;

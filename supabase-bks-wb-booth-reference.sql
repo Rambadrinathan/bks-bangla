@@ -334,11 +334,18 @@ on conflict (ac_no) do update set
 -- 2. Booths -- one row per polling station Part ----------------------------
 
 create table if not exists public.bks_wb_booths (
-  ac_no     smallint not null references public.bks_wb_constituencies(ac_no),
-  part_no   integer  not null check (part_no > 0),
-  part_name text     not null,
-  primary key (ac_no, part_no)
+  ac_no      smallint not null references public.bks_wb_constituencies(ac_no),
+  booth_no   integer  not null check (booth_no between 1 and 3000),
+  booth_name text     not null,
+  gram_panchayat_or_ward text,
+  village_or_para text,
+  district   text,
+  updated_at timestamptz not null default now(),
+  primary key (ac_no, booth_no)
 );
+
+-- Column names follow bks_booth_volunteers (booth_no / booth_name) and the
+-- cascading picker's query contract, not the ECI's part_no / part_name.
 
 comment on table public.bks_wb_booths is
   'The 80,710 West Bengal polling stations, from the ECI BLO list of 27.07.2026. Public geography only -- no BLO name, phone, designation or department. Lets the volunteer page confirm a booth back by building name instead of trusting a typed number.';
@@ -358,4 +365,4 @@ grant select on public.bks_wb_booths to anon, authenticated;
 
 -- Then load the 80,710 rows from bks_wb_booths.csv --
 -- Supabase Table Editor -> bks_wb_booths -> Import data from CSV.
--- Columns line up exactly: ac_no, part_no, part_name.
+-- Columns map: ac_no, part_no -> booth_no, part_name -> booth_name.
