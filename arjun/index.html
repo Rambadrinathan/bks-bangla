@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>অর্জুন · ভারতীয় কৃষক সমাজ — বুথ স্বেচ্ছাসেবক</title>
+<meta name="description" content="Talk to Arjun and join as the booth volunteer for your polling station. Bengali, voice first." />
+<meta name="theme-color" content="#174f35" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Noto+Sans+Bengali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/arjun/arjun.css" />
+</head>
+<body>
+
+<header class="bar">
+  <div class="brand">
+    <img src="/assets/bks-logo.png" alt="" onerror="this.style.display='none'" />
+    <span>ভারতীয় কৃষক সমাজ</span>
+  </div>
+  <div class="lang" role="group" aria-label="ভাষা">
+    <button type="button" data-lang="bn" class="active">বাংলা</button>
+    <button type="button" data-lang="en">English</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- intro ------------------------------------------------------------ -->
+  <section class="screen show" id="sIntro">
+    <div class="avatar" aria-hidden="true">অ</div>
+    <h1 data-t="introTitle">অর্জুনের সঙ্গে কথা বলুন</h1>
+    <p class="lead" data-t="introLead">
+      বাংলার প্রতিটি বুথে একজন করে কৃষক ভাই। অর্জুন আপনাকে দু-এক মিনিটে আপনার বুথ খুঁজে দেবে।
+      শুধু কথা বলুন — লিখতে হবে না।
+    </p>
+    <button type="button" class="btn primary big" id="startBtn" data-t="start">শুরু করুন</button>
+    <a class="linky" href="/volunteer/easy" data-t="preferType">আমি লিখে করতে চাই</a>
+    <p class="tiny" data-t="micNote">শুরু করলে মাইক্রোফোনের অনুমতি চাইবে। অনুমতি দিন।</p>
+  </section>
+
+  <!-- live -------------------------------------------------------------- -->
+  <section class="screen" id="sLive">
+    <div class="statusline" id="status" data-t="connecting">জোড়া লাগছে…</div>
+
+    <button type="button" class="micbtn" id="micBtn" aria-live="polite">
+      <span class="ring"></span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3Z"/><path d="M18 11a6 6 0 0 1-12 0M12 17v4"/></svg>
+      <b id="micLabel" data-t="tapToTalk">বলতে চাপুন</b>
+    </button>
+
+    <div class="captions">
+      <p class="said" id="userSaid"></p>
+      <p class="arjun" id="arjunSaid"></p>
+    </div>
+
+    <!-- the receipt: what has been settled so far -->
+    <div class="statecard" id="stateCard" hidden>
+      <div class="row" id="rowAc" hidden><span data-t="lblArea">এলাকা</span><b id="vAc"></b></div>
+      <div class="row" id="rowBuilding" hidden><span data-t="lblBuilding">যেখানে ভোট দেন</span><b id="vBuilding"></b></div>
+      <div class="row" id="rowBooth" hidden><span data-t="lblBooth">বুথ</span><b id="vBooth"></b></div>
+    </div>
+
+    <button type="button" class="linky" id="endBtn" data-t="endCall">কথা শেষ</button>
+  </section>
+
+  <!-- confirm card ------------------------------------------------------ -->
+  <section class="screen" id="sCard">
+    <h1 data-t="confirmTitle">এটাই কি আপনার বুথ?</h1>
+
+    <div class="bigcard">
+      <div class="bigcard-name" id="cardBuilding"></div>
+      <div class="bigcard-sub" id="cardSub"></div>
+      <div class="rolechip" id="cardRole"></div>
+    </div>
+
+    <p class="help" id="cardMulti" hidden></p>
+
+    <label class="fld">
+      <span data-t="lblName">আপনার নাম</span>
+      <input id="cName" type="text" maxlength="120" autocomplete="name" data-tph="namePh" placeholder="আপনার পুরো নাম" />
+    </label>
+    <label class="fld">
+      <span data-t="lblPhone">আপনার মোবাইল নম্বর</span>
+      <input id="cPhone" type="tel" inputmode="numeric" maxlength="10" autocomplete="tel" data-tph="phonePh" placeholder="১০ সংখ্যার নম্বর" />
+    </label>
+
+    <p class="tiny" data-t="consent">
+      যোগ দিন চাপলে আপনি সম্মতি দিচ্ছেন যে ভারতীয় কৃষক সমাজ বুথের কাজে এই নম্বরে ফোন করতে পারে।
+      নম্বরটা ওয়েবসাইটে কখনও দেখানো হবে না।
+    </p>
+
+    <div id="cardStatus" class="status" hidden></div>
+
+    <div class="actions">
+      <button type="button" class="btn primary big" id="joinBtn" data-t="join">যোগ দিন</button>
+      <button type="button" class="linky" id="backToTalk" data-t="talkMore">অর্জুনের সঙ্গে আবার কথা বলি</button>
+    </div>
+  </section>
+
+  <!-- done -------------------------------------------------------------- -->
+  <section class="screen" id="sDone">
+    <div class="tick" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 13 5 5L20 7"/></svg></div>
+    <h1 data-t="doneTitle">আপনি আপনার বুথের স্বেচ্ছাসেবক</h1>
+    <div class="bigcard done">
+      <div class="bigcard-name" id="doneBuilding"></div>
+      <div class="bigcard-sub" id="doneSub"></div>
+    </div>
+    <p class="help" data-t="codeHelp">এই নম্বরটি রাখুন। কেউ ফোন করলে বলবেন।</p>
+    <div class="code" id="doneCode"></div>
+    <div class="actions">
+      <a class="btn wa big" id="waBtn" target="_blank" rel="noopener" data-t="sendWa">হোয়াটসঅ্যাপে পাঠান</a>
+    </div>
+  </section>
+
+</main>
+
+<script src="/arjun/arjun.js"></script>
+</body>
+</html>
