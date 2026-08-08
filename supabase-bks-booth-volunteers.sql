@@ -408,3 +408,31 @@ grant execute on function public.bks_booth_availability(smallint, integer) to an
 -- update public.bks_booth_volunteers
 --    set status = 'withdrawn', deactivated_reason = 'left the village', deactivated_at = now()
 --  where claim_code = 'WB-123-B0045-A1B2';
+
+
+-- ---------------------------------------------------------------------------
+-- 8. Anti-abuse hardening (applied 2026-08-08)
+--
+-- Two real holes, found by attacking this myself:
+--
+--  a) The sahayak cap of 4 is a counted read-then-write, not an index, so two
+--     volunteers submitting in the same second can both pass a count of 3. A
+--     whole village enrolling at one camp will hit this.
+--  b) There was no velocity limit at all. The booth list is public and this
+--     function is anon-executable, so the whole state could be claimed with
+--     valid-format fake mobiles -- and because every uniqueness index is scoped
+--     to the live statuses, each fake claim BLOCKS a real volunteer.
+--
+-- The live definition now carries:
+--   - pg_advisory_xact_lock on (ac_no, booth_no) before the sahayak count
+--   - per-constituency 80/hour and global 400/hour caps, returning
+--     reason = 'rate_limited'
+--   - a bks_claim_velocity ledger (first 4 phone digits only, no anon access)
+--
+-- Limits sit well above genuine field use: a camp enrolling 300 people in an
+-- afternoon in one constituency stays far under them.
+--
+-- STILL OPEN, and the most important remaining gap: there is no OTP. Anyone can
+-- still enrol with a phone number they do not own. Rate limiting slows a
+-- land-grab; it does not make the volunteer list trustworthy. See §6 of
+-- DESIGN-booth-volunteer-platform.md.

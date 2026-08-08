@@ -366,3 +366,100 @@ grant select on public.bks_wb_booths to anon, authenticated;
 -- Then load the 80,710 rows from bks_wb_booths.csv --
 -- Supabase Table Editor -> bks_wb_booths -> Import data from CSV.
 -- Columns map: ac_no, part_no -> booth_no, part_name -> booth_name.
+
+
+-- ---------------------------------------------------------------------------
+-- 3. Lookup functions
+--
+-- These were applied straight to the database and for a while existed in no
+-- .sql file at all, which made them unreproducible. They are load-bearing for
+-- /volunteer/easy and for Arjun, so they live here now.
+-- ---------------------------------------------------------------------------
+
+create extension if not exists pg_trgm;
+
+create index if not exists bks_wb_booths_name_trgm
+  on public.bks_wb_booths using gin (booth_name gin_trgm_ops);
+
+-- Fuzzy search over booth names. p_ac_no is the important argument: statewide,
+-- a query like "primary school" is meaningless against 80,710 rows, but inside
+-- one constituency there are only ~188 buildings and it is usually decisive.
+-- Tolerates misspelling -- "dulia praimary" finds "DUKHIRAM PRAIMARY SCHOOL".
+--
+-- Keep exactly ONE signature. An overload makes PostgREST return PGRST203
+-- ("could not choose the best candidate function") and every existing 3-arg
+-- caller breaks.
+create or replace function public.bks_search_booths(
+  p_query    text,
+  p_district text default null,
+  p_limit    integer default 8,
+  p_ac_no    smallint default null
+)
+returns table (
+  ac_no smallint, booth_no integer, booth_name text,
+  ac_name text, district text, score real
+)
+language sql stable security definer set search_path = public
+as $$
+  select b.ac_no, b.booth_no, b.booth_name, c.ac_name, c.district,
+         similarity(b.booth_name, p_query) as score
+  from public.bks_wb_booths b
+  join public.bks_wb_constituencies c on c.ac_no = b.ac_no
+  where length(btrim(coalesce(p_query,''))) >= 3
+    and (p_ac_no    is null or b.ac_no = p_ac_no)
+    and (p_district is null or c.district = p_district)
+    and b.booth_name %> p_query
+  order by similarity(b.booth_name, p_query) desc, b.booth_name
+  limit least(greatest(coalesce(p_limit,8), 1), 25);
+$$;
+
+revoke all on function public.bks_search_booths(text, text, integer, smallint) from public;
+grant execute on function public.bks_search_booths(text, text, integer, smallint) to anon, authenticated;
+
+-- Every booth in one constituency, for the browse fallback.
+create or replace function public.bks_booths_in_ac(p_ac_no smallint)
+returns table (booth_no integer, booth_name text)
+language sql stable security definer set search_path = public
+as $$
+  select booth_no, booth_name from public.bks_wb_booths
+  where ac_no = p_ac_no order by booth_no;
+$$;
+
+revoke all on function public.bks_booths_in_ac(smallint) from public;
+grant execute on function public.bks_booths_in_ac(smallint) to anon, authenticated;
+
+-- Booths at one building with live availability. A farmer knows the building,
+-- never which room, so the SERVER assigns the booth -- never the caller and
+-- never the model. assigned_booth_no is the lowest free one; once it is taken
+-- the next volunteer at the same building is handed the next one automatically.
+create or replace function public.bks_building_booths(p_ac_no smallint, p_booth_name text)
+returns jsonb
+language sql stable security definer set search_path = public
+as $$
+  with b as (
+    select w.booth_no,
+           exists (select 1 from public.bks_booth_volunteers v
+                    where v.ac_no = w.ac_no and v.booth_no = w.booth_no
+                      and v.role = 'booth_prabhari'
+                      and v.status in ('claimed','verified','active')) as taken,
+           (select count(*) from public.bks_booth_volunteers v
+             where v.ac_no = w.ac_no and v.booth_no = w.booth_no
+               and v.role = 'booth_sahayak'
+               and v.status in ('claimed','verified','active')) as support
+    from public.bks_wb_booths w
+    where w.ac_no = p_ac_no and w.booth_name = p_booth_name
+  )
+  select jsonb_build_object(
+    'ac_no', p_ac_no,
+    'booth_name', p_booth_name,
+    'booths', coalesce((select jsonb_agg(booth_no order by booth_no) from b), '[]'::jsonb),
+    'assigned_booth_no', (select min(booth_no) from b where not taken),
+    'assigned_role', case when exists (select 1 from b where not taken)
+                          then 'booth_prabhari'
+                          else (select case when min(support) < 4 then 'booth_sahayak' end from b) end,
+    'fallback_booth_no', (select booth_no from b where support < 4 order by support, booth_no limit 1)
+  );
+$$;
+
+revoke all on function public.bks_building_booths(smallint, text) from public;
+grant execute on function public.bks_building_booths(smallint, text) to anon, authenticated;
