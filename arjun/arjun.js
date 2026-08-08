@@ -32,6 +32,7 @@ const T = {
     listening:'শুনছি…',
     arjunSpeaking:'অর্জুন বলছে…',
     thinking:'একটু দেখি…',
+    enterDetails:'নাম ও নম্বর দিন',
     endCall:'কথা শেষ',
     lblArea:'এলাকা', lblBuilding:'যেখানে ভোট দেন', lblBooth:'বুথ',
     confirmTitle:'এটাই কি আপনার বুথ?',
@@ -41,7 +42,7 @@ const T = {
     join:'যোগ দিন', joining:'যোগ করা হচ্ছে…',
     talkMore:'অর্জুনের সঙ্গে আবার কথা বলি',
     rolePrabhari:'বুথ প্রভারী', roleSahayak:'বুথ সহায়ক',
-    multiBooths:'এই ভবনে {n}টি বুথ আছে। আপনাকে {b} নম্বরে রাখা হচ্ছে, কারণ ওটা খালি। ফোন করার সময় আমাদের লোক আপনার স্লিপ দেখে মিলিয়ে নেবেন।',
+    multiBooths:'কোন ঘরে ভোট দেন সেটা মনে রাখার দরকার নেই — কেউই মনে রাখে না। এই ভবনে {n}টি বুথ আছে, আপনাকে {b} নম্বরে রাখা হচ্ছে। ফোন করার সময় আমাদের লোক আপনার স্লিপ দেখে মিলিয়ে নেবেন।',
     heldBy:'এই বুথে {name} ইতিমধ্যেই আছেন, তাই আপনি সহায়ক হিসেবে যোগ দিচ্ছেন।',
     needName:'আপনার নাম লিখুন।',
     needPhone:'১০ সংখ্যার মোবাইল নম্বর লিখুন।',
@@ -69,6 +70,7 @@ const T = {
     listening:'Listening…',
     arjunSpeaking:'Arjun is speaking…',
     thinking:'One moment…',
+    enterDetails:'Enter name and number',
     endCall:'End',
     lblArea:'Area', lblBuilding:'Where you vote', lblBooth:'Booth',
     confirmTitle:'Is this your booth?',
@@ -78,7 +80,7 @@ const T = {
     join:'Join', joining:'Joining…',
     talkMore:'Talk to Arjun again',
     rolePrabhari:'Booth Prabhari', roleSahayak:'Booth Sahayak',
-    multiBooths:'This building has {n} booths. You are being given booth {b} because it is free. The district team will match it against your slip when they call.',
+    multiBooths:'You do not need to remember which room you vote in — nobody does. This building has {n} booths and you are being put on booth {b}. The district team will match it against your slip when they call.',
     heldBy:'{name} already looks after this booth, so you are joining as a helper.',
     needName:'Please write your name.',
     needPhone:'Please write your 10-digit mobile number.',
@@ -325,9 +327,18 @@ function applyToolResult(name, result){
     S.building = { ac_no:result.ac_no, booth_name:result.booth_name, booths:result.booths };
     showRow('rowBuilding','vBuilding', result.booth_name);
     if(result.assigned_booth_no) showRow('rowBooth','vBooth', String(result.assigned_booth_no));
+
+    // The booth is settled, so the name and number boxes are now reachable.
+    // Deliberately does NOT switch screens — Arjun is usually still speaking,
+    // and yanking the mic away mid-sentence is worse than a visible button.
+    if(result.card){
+      S.card = result.card;
+      $('toFormBtn').hidden = false;
+    }
   }
   if(name === 'show_booth_card' && result.card){
     S.card = result.card;
+    $('toFormBtn').hidden = false;
     renderCard(result.card);
   }
 }
@@ -518,5 +529,6 @@ function setState(el, kind, msg){
 $('startBtn').addEventListener('click', start);
 $('endBtn').addEventListener('click', () => { hangUp(); go('sIntro'); });
 $('backToTalk').addEventListener('click', () => { go('sLive'); });
+$('toFormBtn').addEventListener('click', () => { if(S.card) renderCard(S.card); });
 
 applyLang();

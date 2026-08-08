@@ -34,6 +34,19 @@ const int = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 
+async function acMeta(acNo) {
+  try {
+    const r = await fetch(
+      `${SUPABASE_URL}/rest/v1/bks_wb_constituencies?select=ac_name,district&ac_no=eq.${acNo}&limit=1`,
+      { headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` } }
+    );
+    const j = await r.json();
+    return (j && j[0]) || {};
+  } catch (e) {
+    return {};
+  }
+}
+
 /* One building usually holds more than one booth. He knows the building, not
    which room, so results collapse to one card per building and the booth is
    settled afterwards by the server. */
@@ -100,17 +113,29 @@ const TOOLS = {
         say: 'Every booth at this building already has a full team. Offer him one of the other buildings from the search.'
       };
     }
+    const count = (info.booths || []).length;
+    const role = info.assigned_role || 'booth_sahayak';
+    const acRow = await acMeta(acNo);
+
     return {
       ac_no: acNo,
       booth_name: name,
       booths: info.booths,
-      booth_count: (info.booths || []).length,
+      booth_count: count,
       assigned_booth_no: assigned,
-      assigned_role: info.assigned_role || 'booth_sahayak',
+      assigned_role: role,
+      // Returned so the client can put the name-and-number form on screen the
+      // moment a booth is settled, instead of waiting for the model to decide
+      // to call show_booth_card. The form must never depend on that.
+      card: {
+        ac_no: acNo, booth_no: assigned, booth_name: name,
+        ac_name: acRow.ac_name || null, district: acRow.district || null,
+        role, held_by: null, full_name: null
+      },
       say:
-        (info.booths || []).length > 1
-          ? `This building has ${info.booths.length} booths. Booth ${assigned} is the one to give him. Tell him plainly that the district team will match it against his slip when they call.`
-          : `One booth here, number ${assigned}.`
+        count > 1
+          ? `This building has ${count} booths and he is being given booth ${assigned}. Do NOT ask him which room or which booth he votes in — nobody remembers that. Reassure him it does not matter, tell him you are putting him on booth ${assigned}, and say the district team will match it against his slip when they call.`
+          : `One booth here, number ${assigned}. Tell him that is his booth.`
     };
   },
 
@@ -145,14 +170,7 @@ const TOOLS = {
 
     const [av, acRow] = await Promise.all([
       rpc('bks_booth_availability', { p_ac_no: acNo, p_booth_no: boothNo }),
-      (async () => {
-        const r = await fetch(
-          `${SUPABASE_URL}/rest/v1/bks_wb_constituencies?select=ac_name,district&ac_no=eq.${acNo}&limit=1`,
-          { headers: { apikey: SUPABASE_ANON, Authorization: `Bearer ${SUPABASE_ANON}` } }
-        );
-        const j = await r.json();
-        return (j && j[0]) || {};
-      })()
+      acMeta(acNo)
     ]);
 
     const role = av.prabhari_taken ? 'booth_sahayak' : 'booth_prabhari';
